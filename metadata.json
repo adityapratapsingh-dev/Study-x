@@ -1,0 +1,6 @@
+{
+  "name": "Student Workspace & Study Hub",
+  "description": "Comprehensive student workspace with rich markdown notes, AI-powered quiz & test generation, flashcards, timed exams, focus timer, and task manager.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
