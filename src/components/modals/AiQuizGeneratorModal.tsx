@@ -91,11 +91,16 @@ export const AiQuizGeneratorModal: React.FC = () => {
         title: res.title,
         description: res.description,
         subjectId: selectedSubject,
+        examType: 'CHAPTER_WISE',
+        targetExam: 'JEE',
         estimatedMinutes: res.estimatedMinutes,
+        totalMarks: res.questions.length * 4,
+        positiveMarks: 4,
+        negativeMarks: 1,
         difficulty,
         questions: res.questions,
         noteIdRef: chosenNote?.id,
-        tags: [difficulty, 'AI-Generated'],
+        tags: [difficulty, 'AI-Generated', 'Practice'],
       });
 
       handleClose();

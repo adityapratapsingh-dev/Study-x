@@ -1,6 +1,6 @@
 {
-  "name": "Student Workspace & Study Hub",
-  "description": "Comprehensive student workspace with rich markdown notes, AI-powered quiz & test generation, flashcards, timed exams, focus timer, and task manager.",
+  "name": "RankForge - JEE & NEET Prep Hub",
+  "description": "Student-friendly competitive exam prep platform for JEE and NEET aspirants with NTA CBT mock test simulator, NCERT line-by-line notes, formula sheets, PYQ bank, and mistake notebook.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

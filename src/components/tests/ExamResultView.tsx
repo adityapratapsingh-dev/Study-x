@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import confetti from 'canvas-confetti';
 import { Test, TestAttempt, Question } from '../../types';
 import { useWorkspace } from '../../context/WorkspaceContext';
@@ -15,6 +15,9 @@ import {
   ArrowRight,
   TrendingUp,
   AlertCircle,
+  BookmarkPlus,
+  Zap,
+  Award,
 } from 'lucide-react';
 
 interface ExamResultViewProps {
@@ -30,33 +33,79 @@ export const ExamResultView: React.FC<ExamResultViewProps> = ({
   onRetake,
   onBackToCatalog,
 }) => {
-  const { subjects, addDeck, setActiveTab } = useWorkspace();
-  const subject = subjects.find((s) => s.id === test.subjectId);
+  const { addMistakeLog, setActiveTab } = useWorkspace();
+  const [loggedMistakeIds, setLoggedMistakeIds] = useState<Set<string>>(new Set());
+  const [bulkLogSuccess, setBulkLogSuccess] = useState(false);
+
+  const posMark = test.positiveMarks || 4;
+  const negMark = test.negativeMarks || 1;
+
+  // Compute breakdown
+  let correctCount = attempt.correctCount ?? 0;
+  let incorrectCount = attempt.incorrectCount ?? 0;
+  let unattemptedCount = attempt.unattemptedCount ?? 0;
+
+  if (attempt.correctCount === undefined) {
+    test.questions.forEach((q) => {
+      const studentAns = (attempt.answers[q.id] || '').trim();
+      const correctAns = (q.correctAnswer || '').trim();
+      if (!studentAns) unattemptedCount += 1;
+      else if (studentAns.toLowerCase() === correctAns.toLowerCase()) correctCount += 1;
+      else incorrectCount += 1;
+    });
+  }
+
+  const marksGained = correctCount * posMark;
+  const marksLostToNegatives = incorrectCount * negMark;
+  const computedScore = marksGained - marksLostToNegatives;
+  const totalMarks = test.totalMarks || test.questions.length * posMark;
+  const accuracyPct = correctCount + incorrectCount > 0 ? Math.round((correctCount / (correctCount + incorrectCount)) * 100) : 0;
 
   useEffect(() => {
-    if (attempt.percentage >= 70) {
+    if (accuracyPct >= 80) {
       try {
         confetti({
-          particleCount: 80,
-          spread: 70,
+          particleCount: 70,
+          spread: 60,
           origin: { y: 0.6 },
         });
       } catch (e) {
         // ignore
       }
     }
-  }, [attempt.percentage]);
+  }, [accuracyPct]);
 
-  const getLetterGrade = (pct: number) => {
-    if (pct >= 95) return { grade: 'A+', text: 'Mastery Level!', color: 'text-emerald-400' };
-    if (pct >= 85) return { grade: 'A', text: 'Excellent Work!', color: 'text-emerald-400' };
-    if (pct >= 75) return { grade: 'B', text: 'Good Understanding', color: 'text-blue-400' };
-    if (pct >= 65) return { grade: 'C', text: 'Passing - Needs Review', color: 'text-amber-400' };
-    if (pct >= 50) return { grade: 'D', text: 'Needs Improvement', color: 'text-orange-400' };
-    return { grade: 'F', text: 'Requires Focused Study', color: 'text-rose-400' };
+  const missedQuestions = test.questions.filter((q) => {
+    const studentAns = (attempt.answers[q.id] || '').trim().toLowerCase();
+    const correctAns = (q.correctAnswer || '').trim().toLowerCase();
+    return studentAns && studentAns !== correctAns;
+  });
+
+  const handleLogSingleMistake = (q: Question) => {
+    addMistakeLog({
+      questionText: q.question,
+      yourAnswer: attempt.answers[q.id] || 'Option chosen in mock',
+      correctAnswer: q.correctAnswer,
+      explanation: q.explanation,
+      subject: q.subject || 'Physics',
+      chapter: q.chapter || 'Mock Test Review',
+      examType: test.targetExam || 'JEE',
+      category: 'conceptual_gap',
+      personalNotes: `Logged from ${test.title} (Score: ${computedScore}/${totalMarks})`,
+      isResolved: false,
+    });
+    setLoggedMistakeIds((prev) => new Set(prev).add(q.id));
   };
 
-  const gradeInfo = getLetterGrade(attempt.percentage);
+  const handleBulkLogAllMissed = () => {
+    missedQuestions.forEach((q) => {
+      if (!loggedMistakeIds.has(q.id)) {
+        handleLogSingleMistake(q);
+      }
+    });
+    setBulkLogSuccess(true);
+    setTimeout(() => setBulkLogSuccess(false), 4000);
+  };
 
   const formatDuration = (secs: number) => {
     const m = Math.floor(secs / 60);
@@ -64,208 +113,215 @@ export const ExamResultView: React.FC<ExamResultViewProps> = ({
     return `${m}m ${s}s`;
   };
 
-  const missedQuestions: Question[] = test.questions.filter((q) => {
-    const studentAns = (attempt.answers[q.id] || '').trim().toLowerCase();
-    const correctAns = (q.correctAnswer || '').trim().toLowerCase();
-    if (q.type === 'short') {
-      return !studentAns || !correctAns.includes(studentAns);
-    }
-    return studentAns !== correctAns;
-  });
-
-  const handleMakeFlashcardsFromMissed = () => {
-    if (missedQuestions.length === 0) return;
-    addDeck({
-      title: `${test.title} - Missed Questions Deck`,
-      subjectId: test.subjectId,
-      noteIdRef: test.noteIdRef,
-      cards: missedQuestions.map((q) => ({
-        id: 'c-missed-' + Math.random().toString(36).slice(2, 7),
-        front: q.question,
-        back: `Correct Answer: ${q.correctAnswer}\n\nExplanation: ${q.explanation}`,
-        category: q.topicTag || 'Review',
-        state: 'learning',
-      })),
-    });
-    setActiveTab('flashcards');
-  };
-
   return (
-    <div className="flex-1 p-6 md:p-8 bg-slate-950 text-slate-100 overflow-y-auto max-w-4xl mx-auto w-full space-y-8">
+    <div className="flex-1 p-4 sm:p-6 lg:p-8 bg-slate-950 text-slate-100 overflow-y-auto max-w-5xl mx-auto w-full space-y-8">
       
-      {/* Diagnostic Score Card */}
-      <div className="p-6 md:p-8 rounded-3xl bg-gradient-to-br from-slate-900 via-indigo-950/40 to-slate-900 border border-slate-800 shadow-xl relative overflow-hidden">
-        
-        {/* Glow effect */}
-        <div className="absolute top-0 right-0 w-72 h-72 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
-
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
-          
-          {/* Left stats overview */}
-          <div className="space-y-3 text-center md:text-left">
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-indigo-500/20 text-indigo-300 rounded-full text-xs font-semibold">
-              <Trophy className="w-3.5 h-3.5" />
-              <span>Exam Complete</span>
-            </div>
-            
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-              {test.title}
-            </h1>
-            
-            <p className="text-sm text-slate-400">
-              Subject: <span className="font-semibold text-slate-200">{subject?.name || 'General'}</span>
-            </p>
-
-            <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 pt-2 text-xs text-slate-300">
-              <div className="flex items-center gap-1.5 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700">
-                <Clock className="w-3.5 h-3.5 text-indigo-400" />
-                <span>Time Spent: {formatDuration(attempt.durationSeconds)}</span>
-              </div>
-              <div className="flex items-center gap-1.5 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                <span>{attempt.score} / {attempt.totalQuestions} Correct</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Right grade ring */}
-          <div className="flex flex-col items-center justify-center p-6 bg-slate-900/90 rounded-2xl border border-slate-800 shadow-inner w-44 h-44 shrink-0">
-            <span className={`text-5xl font-black ${gradeInfo.color}`}>
-              {attempt.percentage}%
-            </span>
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-400 mt-1">
-              Grade {gradeInfo.grade}
-            </span>
-            <span className="text-[11px] text-slate-400 font-medium mt-0.5 text-center">
-              {gradeInfo.text}
-            </span>
-          </div>
-        </div>
-
-        {/* Action bar */}
-        <div className="flex flex-wrap items-center justify-between gap-3 pt-6 mt-6 border-t border-slate-800/80 relative z-10">
+      {/* Toast Alert */}
+      {bulkLogSuccess && (
+        <div className="bg-emerald-600 text-white px-4 py-3 rounded-xl shadow-xl flex items-center justify-between border border-emerald-400/30">
           <div className="flex items-center gap-2">
-            <button
-              onClick={onRetake}
-              className="flex items-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-lg shadow-md transition cursor-pointer"
-            >
-              <RotateCcw className="w-3.5 h-3.5" />
-              <span>Retake Test</span>
-            </button>
-
-            {missedQuestions.length > 0 && (
-              <button
-                onClick={handleMakeFlashcardsFromMissed}
-                className="flex items-center gap-1.5 px-4 py-2 bg-amber-600/20 hover:bg-amber-600/30 text-amber-300 border border-amber-500/30 text-xs font-semibold rounded-lg transition cursor-pointer"
-                title="Create active recall deck for missed concepts"
-              >
-                <Layers className="w-3.5 h-3.5" />
-                <span>Turn {missedQuestions.length} Missed into Flashcards</span>
-              </button>
-            )}
+            <CheckCircle2 className="w-5 h-5 text-emerald-200" />
+            <span className="text-sm font-semibold">
+              All {missedQuestions.length} missed questions saved to Mistake Notebook (Galti Diary)!
+            </span>
           </div>
-
           <button
-            onClick={onBackToCatalog}
-            className="text-xs text-slate-400 hover:text-slate-200 transition font-medium"
+            onClick={() => setActiveTab('mistakes')}
+            className="text-xs bg-slate-900 px-3 py-1 rounded-lg text-emerald-300 font-bold hover:bg-slate-800"
           >
-            ← Back to Tests Catalog
+            Open Diary →
           </button>
         </div>
+      )}
+
+      {/* Main Scorecard Banner */}
+      <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-slate-900 via-blue-950/40 to-slate-900 border border-slate-800 shadow-xl relative overflow-hidden space-y-6">
+        
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-6">
+          <div>
+            <span className="text-xs uppercase font-bold px-2.5 py-1 rounded-md bg-blue-500/20 text-blue-300 border border-blue-500/30">
+              Official NTA Performance Report
+            </span>
+            <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight mt-2">
+              {test.title}
+            </h1>
+            <p className="text-xs text-slate-400 mt-1">
+              Attempted on {new Date(attempt.startedAt).toLocaleDateString()} • Duration: {formatDuration(attempt.durationSeconds)}
+            </p>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <button
+              onClick={onRetake}
+              className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs sm:text-sm font-semibold rounded-xl border border-slate-700 transition cursor-pointer flex items-center gap-2"
+            >
+              <RotateCcw className="w-4 h-4" />
+              Retake Test
+            </button>
+            <button
+              onClick={onBackToCatalog}
+              className="px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-xs sm:text-sm font-semibold rounded-xl shadow-md shadow-blue-600/20 transition cursor-pointer flex items-center gap-2"
+            >
+              Done & Return
+            </button>
+          </div>
+        </div>
+
+        {/* 4 Score Metrics Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-1">
+            <span className="text-xs text-slate-400 font-medium">Calculated Score</span>
+            <div className="text-2xl sm:text-3xl font-bold text-white font-mono">
+              <span className={computedScore >= 0 ? 'text-emerald-400' : 'text-rose-400'}>
+                {computedScore}
+              </span>
+              <span className="text-xs text-slate-500 font-sans font-normal ml-1">/ {totalMarks}</span>
+            </div>
+            <div className="text-[11px] text-slate-400">Target Score: {Math.round(totalMarks * 0.85)}+</div>
+          </div>
+
+          <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-1">
+            <span className="text-xs text-slate-400 font-medium">Question Accuracy</span>
+            <div className="text-2xl sm:text-3xl font-bold text-blue-400 font-mono">
+              {accuracyPct}%
+            </div>
+            <div className="text-[11px] text-slate-400">Aim for &gt; 85% accuracy</div>
+          </div>
+
+          <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-1">
+            <span className="text-xs text-slate-400 font-medium">Correct Attempts (+{posMark})</span>
+            <div className="text-2xl sm:text-3xl font-bold text-emerald-400 font-mono">
+              {correctCount}
+              <span className="text-xs text-slate-500 ml-1">/ {test.questions.length}</span>
+            </div>
+            <div className="text-[11px] text-emerald-300">+{marksGained} marks gained</div>
+          </div>
+
+          <div className="p-4 rounded-2xl bg-slate-950/80 border border-rose-950/40 space-y-1">
+            <span className="text-xs text-rose-300 font-medium">Negative Marks Lost (-{negMark})</span>
+            <div className="text-2xl sm:text-3xl font-bold text-rose-400 font-mono">
+              -{marksLostToNegatives}
+            </div>
+            <div className="text-[11px] text-rose-300">{incorrectCount} incorrect questions</div>
+          </div>
+        </div>
+
+        {/* Missed questions bulk action banner */}
+        {missedQuestions.length > 0 && (
+          <div className="p-4 rounded-2xl bg-amber-950/30 border border-amber-500/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex items-center gap-2.5">
+              <AlertCircle className="w-5 h-5 text-amber-400 shrink-0" />
+              <div>
+                <h4 className="text-xs sm:text-sm font-bold text-white">
+                  {missedQuestions.length} Questions Got Negative Marks
+                </h4>
+                <p className="text-xs text-slate-300">
+                  Save all errors directly into your Mistake Notebook (Galti Diary) for weekend re-attempt.
+                </p>
+              </div>
+            </div>
+
+            <button
+              onClick={handleBulkLogAllMissed}
+              className="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs rounded-xl shadow-md transition cursor-pointer flex items-center gap-1.5 shrink-0"
+            >
+              <BookmarkPlus className="w-4 h-4" />
+              Log All to Mistake Diary
+            </button>
+          </div>
+        )}
       </div>
 
-      {/* Question-by-Question Review Breakdown */}
+      {/* Detailed Question by Question Review */}
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-base font-bold text-white uppercase tracking-wider">
-            Detailed Question Review ({test.questions.length})
-          </h2>
-          <span className="text-xs text-slate-400">
-            Green = Correct, Red = Incorrect / Partial
-          </span>
-        </div>
+        <h3 className="text-base font-bold text-white flex items-center gap-2">
+          <BookOpen className="w-4 h-4 text-blue-400" />
+          Step-by-Step Question & Solution Review
+        </h3>
 
         <div className="space-y-4">
           {test.questions.map((q, idx) => {
-            const studentAns = attempt.answers[q.id] || '(No answer provided)';
-            const isCorrect =
-              q.type === 'short'
-                ? studentAns !== '(No answer provided)' &&
-                  q.correctAnswer.toLowerCase().includes(studentAns.toLowerCase())
-                : studentAns.trim().toLowerCase() === q.correctAnswer.trim().toLowerCase();
+            const studentAns = (attempt.answers[q.id] || '').trim();
+            const correctAns = (q.correctAnswer || '').trim();
+            const isUnattempted = !studentAns;
+            const isCorrect = !isUnattempted && studentAns.toLowerCase() === correctAns.toLowerCase();
+            const isLogged = loggedMistakeIds.has(q.id);
 
             return (
               <div
                 key={q.id}
-                className={`p-5 rounded-2xl border transition ${
+                className={`p-5 rounded-2xl border transition space-y-3 ${
                   isCorrect
-                    ? 'bg-emerald-950/20 border-emerald-500/30'
-                    : 'bg-rose-950/20 border-rose-500/30'
+                    ? 'bg-slate-900/60 border-emerald-900/40'
+                    : isUnattempted
+                    ? 'bg-slate-900/60 border-slate-800'
+                    : 'bg-slate-900/90 border-rose-900/40 shadow-sm'
                 }`}
               >
-                {/* Question Top Header */}
-                <div className="flex items-start justify-between gap-3 mb-3">
+                {/* Question Header */}
+                <div className="flex flex-wrap items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
+                    <span className="text-xs font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-200">
+                      Q {idx + 1}
+                    </span>
+                    <span className="text-xs text-blue-400 font-semibold">
+                      {q.subject || 'General'} {q.chapter ? `• ${q.chapter}` : ''}
+                    </span>
                     <span
-                      className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                        isCorrect ? 'bg-emerald-500 text-slate-950' : 'bg-rose-500 text-white'
+                      className={`text-[11px] font-bold px-2 py-0.5 rounded ${
+                        isCorrect
+                          ? 'bg-emerald-500/20 text-emerald-300'
+                          : isUnattempted
+                          ? 'bg-slate-800 text-slate-400'
+                          : 'bg-rose-500/20 text-rose-300'
                       }`}
                     >
-                      {idx + 1}
+                      {isCorrect ? `+${posMark} Correct` : isUnattempted ? '0 Unattempted' : `-${negMark} Incorrect`}
                     </span>
-                    <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
-                      {q.type.toUpperCase()} Question
-                    </span>
-                    {q.topicTag && (
-                      <span className="text-[11px] px-2 py-0.5 bg-slate-800 rounded text-slate-400">
-                        #{q.topicTag}
-                      </span>
-                    )}
                   </div>
 
-                  <div className="flex items-center gap-1.5 text-xs font-semibold">
-                    {isCorrect ? (
-                      <span className="text-emerald-400 flex items-center gap-1">
-                        <CheckCircle2 className="w-4 h-4" /> Correct (+1)
-                      </span>
-                    ) : (
-                      <span className="text-rose-400 flex items-center gap-1">
-                        <XCircle className="w-4 h-4" /> Incorrect (0)
-                      </span>
-                    )}
-                  </div>
+                  {!isCorrect && (
+                    <button
+                      onClick={() => handleLogSingleMistake(q)}
+                      disabled={isLogged}
+                      className={`text-xs px-2.5 py-1 rounded-lg font-medium transition cursor-pointer flex items-center gap-1 ${
+                        isLogged
+                          ? 'bg-emerald-950 text-emerald-400 border border-emerald-800'
+                          : 'bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-700'
+                      }`}
+                    >
+                      <BookmarkPlus className="w-3.5 h-3.5" />
+                      {isLogged ? 'Saved to Diary' : 'Add to Mistake Diary'}
+                    </button>
+                  )}
                 </div>
 
-                {/* Question Statement */}
-                <p className="text-sm sm:text-base font-semibold text-white mb-4 leading-relaxed">
+                {/* Question statement */}
+                <div className="text-sm font-medium text-slate-200 leading-relaxed font-sans">
                   {q.question}
-                </p>
+                </div>
 
-                {/* Answers Comparison */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4 text-xs">
-                  <div className="p-3 bg-slate-900/80 rounded-xl border border-slate-800 space-y-1">
-                    <span className="text-slate-400 font-semibold block">Your Answer:</span>
-                    <span
-                      className={`font-medium ${
-                        isCorrect ? 'text-emerald-300 font-semibold' : 'text-rose-300'
-                      }`}
-                    >
-                      {studentAns}
-                    </span>
+                {/* Answer responses comparison */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                  <div className="p-2.5 rounded-lg bg-slate-950 border border-slate-800">
+                    <span className="text-slate-400 block mb-0.5">Your Response:</span>
+                    <strong className={isCorrect ? 'text-emerald-400' : isUnattempted ? 'text-slate-400' : 'text-rose-400'}>
+                      {studentAns || 'Left Unanswered'}
+                    </strong>
                   </div>
-
-                  <div className="p-3 bg-slate-900/80 rounded-xl border border-slate-800 space-y-1">
-                    <span className="text-slate-400 font-semibold block">Correct Answer:</span>
-                    <span className="text-emerald-400 font-bold">{q.correctAnswer}</span>
+                  <div className="p-2.5 rounded-lg bg-slate-950 border border-slate-800">
+                    <span className="text-slate-400 block mb-0.5">Correct Answer:</span>
+                    <strong className="text-emerald-400 font-mono">{correctAns}</strong>
                   </div>
                 </div>
 
-                {/* Detailed Explanation */}
-                <div className="p-3.5 bg-slate-900/90 rounded-xl border border-slate-800 text-xs text-slate-300 leading-relaxed space-y-1">
-                  <span className="font-bold text-indigo-300 flex items-center gap-1">
-                    <HelpCircle className="w-3.5 h-3.5" /> Concept Explanation:
-                  </span>
-                  <p>{q.explanation}</p>
+                {/* Step-by-Step Solution */}
+                <div className="p-3.5 rounded-xl bg-slate-950/80 border border-slate-800 text-xs text-slate-300 space-y-1 font-mono whitespace-pre-line leading-relaxed">
+                  <div className="font-bold text-amber-400 font-sans mb-1 flex items-center gap-1">
+                    <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                    Detailed Solution & Concept:
+                  </div>
+                  {q.explanation}
                 </div>
               </div>
             );

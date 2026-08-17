@@ -12,7 +12,10 @@ import {
   RotateCcw,
   Check,
   Flame,
-  Code2,
+  Atom,
+  Stethoscope,
+  Target,
+  CheckCircle2,
 } from 'lucide-react';
 
 interface ChatMessage {
@@ -24,28 +27,35 @@ interface ChatMessage {
 }
 
 export const AITutorChat: React.FC = () => {
-  const { notes, subjects, selectedSubjectId } = useWorkspace();
+  const { notes, examMode } = useWorkspace();
 
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: 'm1',
       sender: 'ai',
-      text: `👋 **Hello! I am your 24/7 AI Academic Study Assistant.**\n\nI can help you:\n- 🧠 **Explain complex concepts** in intuitive plain English or high-yield exam mode\n- 🔍 **Break down homework problems** step-by-step\n- 💡 **Test your knowledge** with rapid self-test questions\n- 📝 **Analyze any of your saved notes**\n\nWhat topic are you studying today?`,
+      text: `🎯 **Welcome to RankForge AI Doubt Resolution & Rank Mentor!**\n\nI am specialized in the **NTA JEE Main, JEE Advanced, and NEET UG** syllabi.\n\nI can help you with:\n- ⚡ **Step-by-step numerical derivation** & JEE trick shortcuts\n- 🔬 **NCERT Line-by-Line clarity** for Biology & Inorganic Chemistry\n- 🧲 **Physics concept visualization** & free body diagrams\n- 💡 **Analysis of Galti Diary mistakes** to eliminate silly calculation errors\n\nAsk me any concept or paste a challenging question!`,
       timestamp: new Date().toISOString(),
     },
   ]);
 
   const [inputQuery, setInputQuery] = useState('');
   const [selectedNoteContextId, setSelectedNoteContextId] = useState<string>('none');
-  const [tutorMode, setTutorMode] = useState<'standard' | 'eli5' | 'exam-prep' | 'step-by-step'>('standard');
+  const [tutorMode, setTutorMode] = useState<'standard' | 'eli5' | 'exam-prep' | 'step-by-step'>('exam-prep');
   const [isLoading, setIsLoading] = useState(false);
 
-  const samplePrompts = [
-    "Explain SN1 vs SN2 reaction mechanisms simply",
-    "Why can't Dijkstra handle negative edge weights?",
-    "How to calculate eigenvalues of a 2x2 matrix step-by-step",
-    "What triggers an action potential in a neuron?",
-  ];
+  const samplePrompts = examMode === 'jee'
+    ? [
+        "Explain King Property in Definite Integrals with standard shortcuts",
+        "Derive De Broglie wavelength for accelerated electron",
+        "Explain Carbocation rearrangement & hydride shift rules",
+        "How to quickly solve projectile motion on an inclined plane?",
+      ]
+    : [
+        "Explain Lac Operon genes and regulation simply",
+        "What is the Counter-Current Mechanism in human kidney nephron?",
+        "Explain Hückel's Rule for aromaticity with inorganic exceptions",
+        "What is the exact sequence of ECG waves (P, QRS, T)?",
+      ];
 
   const handleSendMessage = async (queryText?: string) => {
     const textToSend = queryText || inputQuery;
@@ -64,11 +74,11 @@ export const AITutorChat: React.FC = () => {
     setIsLoading(true);
 
     try {
-      let contextContent = '';
+      let contextContent = `Candidate Target Exam: ${examMode === 'jee' ? 'JEE Main & Advanced' : 'NEET UG'}\n`;
       if (selectedNoteContextId !== 'none') {
         const attachedNote = notes.find((n) => n.id === selectedNoteContextId);
         if (attachedNote) {
-          contextContent = `Student Note Title: ${attachedNote.title}\nContent:\n${attachedNote.content}`;
+          contextContent += `Student Note Title: ${attachedNote.title}\nContent:\n${attachedNote.content}`;
         }
       }
 
@@ -100,103 +110,79 @@ export const AITutorChat: React.FC = () => {
   };
 
   return (
-    <div className="flex-1 flex flex-col bg-slate-950 text-slate-100 min-h-[calc(100vh-112px)] max-w-5xl mx-auto w-full p-4 sm:p-6 overflow-hidden">
+    <div className="flex-1 flex flex-col bg-slate-950 text-slate-100 overflow-hidden font-sans">
       
-      {/* Top Tutor Configuration Bar */}
-      <div className="p-4 bg-slate-900 border border-slate-800 rounded-2xl mb-4 space-y-3 shrink-0">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <Bot className="w-5 h-5 text-indigo-400" />
-            <h2 className="text-sm font-bold text-white uppercase tracking-wider">
-              AI Academic Tutor
-            </h2>
+      {/* Header bar */}
+      <div className="px-4 sm:px-6 py-3.5 bg-slate-900 border-b border-slate-800 flex flex-wrap items-center justify-between gap-3 shrink-0">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-lg bg-blue-600/20 text-blue-400 border border-blue-500/30 flex items-center justify-center">
+            <Bot className="w-5 h-5" />
           </div>
-
-          {/* Mode Selector */}
-          <div className="flex items-center bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs font-semibold">
-            <button
-              onClick={() => setTutorMode('standard')}
-              className={`px-3 py-1 rounded-lg transition ${
-                tutorMode === 'standard' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              Standard Tutor
-            </button>
-            <button
-              onClick={() => setTutorMode('eli5')}
-              className={`px-3 py-1 rounded-lg transition ${
-                tutorMode === 'eli5' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              ELI5 (Simple)
-            </button>
-            <button
-              onClick={() => setTutorMode('exam-prep')}
-              className={`px-3 py-1 rounded-lg transition ${
-                tutorMode === 'exam-prep' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              Exam High-Yield
-            </button>
-            <button
-              onClick={() => setTutorMode('step-by-step')}
-              className={`px-3 py-1 rounded-lg transition ${
-                tutorMode === 'step-by-step' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              Step-by-Step
-            </button>
+          <div>
+            <h1 className="text-sm sm:text-base font-bold text-white flex items-center gap-2">
+              AI Rank Mentor & 24/7 Doubt Solver
+              <span className="text-[10px] uppercase px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-semibold border border-emerald-500/30">
+                Online
+              </span>
+            </h1>
+            <p className="text-[11px] text-slate-400">
+              Personalized guidance for Physics, Chemistry, Math & Biology
+            </p>
           </div>
         </div>
 
-        {/* Note Context Attachment */}
-        <div className="flex items-center gap-2 text-xs pt-1 border-t border-slate-800/80">
-          <BookOpen className="w-3.5 h-3.5 text-slate-400" />
-          <span className="text-slate-400">Attach Note as Context:</span>
+        {/* Mode Selector */}
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-slate-400 font-medium hidden sm:inline">Explanation Style:</span>
           <select
-            value={selectedNoteContextId}
-            onChange={(e) => setSelectedNoteContextId(e.target.value)}
-            className="px-2 py-1 bg-slate-950 border border-slate-800 rounded-lg text-slate-200 text-xs focus:outline-none"
+            value={tutorMode}
+            onChange={(e) => setTutorMode(e.target.value as any)}
+            className="px-3 py-1.5 bg-slate-800 border border-slate-700 text-xs text-slate-200 rounded-xl focus:ring-1 focus:ring-blue-500 cursor-pointer"
           >
-            <option value="none">None (General Knowledge)</option>
-            {notes.map((n) => (
-              <option key={n.id} value={n.id}>
-                {n.title}
-              </option>
-            ))}
+            <option value="exam-prep">🎯 High-Yield Exam Mode (Top Ranker)</option>
+            <option value="step-by-step">📐 Step-by-Step Derivation</option>
+            <option value="eli5">💡 Simplified Intuitive (Basics)</option>
+            <option value="standard">📖 Standard Comprehensive</option>
           </select>
         </div>
       </div>
 
-      {/* Messages Scroll Area */}
-      <div className="flex-1 overflow-y-auto space-y-4 pr-1 mb-4">
+      {/* Messages Thread */}
+      <div className="flex-1 p-4 sm:p-6 overflow-y-auto space-y-4 max-w-4xl mx-auto w-full">
         {messages.map((msg) => {
-          const isAi = msg.sender === 'ai';
+          const isUser = msg.sender === 'user';
           return (
             <div
               key={msg.id}
-              className={`flex items-start gap-3 ${isAi ? 'justify-start' : 'justify-end'}`}
+              className={`flex items-start gap-3 ${isUser ? 'flex-row-reverse' : 'flex-row'}`}
             >
-              {isAi && (
-                <div className="w-8 h-8 rounded-xl bg-indigo-600/30 border border-indigo-500/40 text-indigo-300 flex items-center justify-center shrink-0 mt-1">
-                  <Bot className="w-4 h-4" />
-                </div>
-              )}
-
               <div
-                className={`max-w-2xl p-4 rounded-2xl text-xs sm:text-sm leading-relaxed ${
-                  isAi
-                    ? 'bg-slate-900 border border-slate-800 text-slate-200 shadow-md'
-                    : 'bg-indigo-600 text-white shadow-indigo-600/20'
+                className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 text-xs font-bold ${
+                  isUser
+                    ? 'bg-blue-600 text-white shadow-md shadow-blue-600/20'
+                    : 'bg-slate-800 text-blue-400 border border-slate-700'
                 }`}
               >
-                {isAi ? (
-                  <div className="prose prose-invert prose-sm max-w-none">
+                {isUser ? 'You' : <Bot className="w-4 h-4" />}
+              </div>
+
+              <div
+                className={`max-w-[85%] rounded-2xl p-4 sm:p-5 text-xs sm:text-sm leading-relaxed space-y-2 ${
+                  isUser
+                    ? 'bg-blue-600 text-white rounded-tr-none shadow-md shadow-blue-600/10'
+                    : 'bg-slate-900/90 text-slate-200 rounded-tl-none border border-slate-800'
+                }`}
+              >
+                {isUser ? (
+                  <div className="whitespace-pre-wrap">{msg.text}</div>
+                ) : (
+                  <div className="markdown-body prose prose-invert max-w-none text-xs sm:text-sm">
                     <ReactMarkdown>{msg.text}</ReactMarkdown>
                   </div>
-                ) : (
-                  <p className="whitespace-pre-line">{msg.text}</p>
                 )}
+                <div className={`text-[10px] text-right ${isUser ? 'text-blue-200' : 'text-slate-500'}`}>
+                  {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </div>
               </div>
             </div>
           );
@@ -204,57 +190,60 @@ export const AITutorChat: React.FC = () => {
 
         {isLoading && (
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-xl bg-indigo-600/30 border border-indigo-500/40 text-indigo-300 flex items-center justify-center shrink-0">
-              <Bot className="w-4 h-4 animate-spin" />
+            <div className="w-8 h-8 rounded-xl bg-slate-800 text-blue-400 border border-slate-700 flex items-center justify-center">
+              <Bot className="w-4 h-4 animate-bounce" />
             </div>
-            <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 text-xs text-slate-400 animate-pulse">
-              AI Tutor is analyzing and formatting explanation...
+            <div className="bg-slate-900 p-3.5 rounded-2xl rounded-tl-none border border-slate-800 text-xs text-slate-400 flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-blue-400 animate-spin" />
+              <span>Analyzing formula, NCERT references and derivations...</span>
             </div>
           </div>
         )}
       </div>
 
-      {/* Suggested Prompt Chips */}
-      {messages.length <= 2 && (
-        <div className="flex flex-wrap gap-1.5 mb-3">
+      {/* Suggested Quick Prompts */}
+      <div className="p-3 bg-slate-900/60 border-t border-slate-800/80">
+        <div className="max-w-4xl mx-auto flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
+          <span className="text-[11px] text-slate-500 font-semibold shrink-0">Try asking:</span>
           {samplePrompts.map((prompt, idx) => (
             <button
               key={idx}
               onClick={() => handleSendMessage(prompt)}
-              className="text-xs px-3 py-1 bg-slate-900 hover:bg-slate-850 text-indigo-300 border border-slate-800 hover:border-indigo-500/40 rounded-full transition cursor-pointer"
+              className="text-xs px-3 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg whitespace-nowrap transition cursor-pointer border border-slate-700/60"
             >
-              💡 {prompt}
+              {prompt}
             </button>
           ))}
         </div>
-      )}
+      </div>
 
-      {/* Chat Input Bar */}
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleSendMessage();
-        }}
-        className="flex items-center gap-2 p-2 bg-slate-900 border border-slate-800 rounded-2xl shrink-0"
-      >
-        <input
-          type="text"
-          id="tutor-chat-input"
-          placeholder="Ask your tutor anything (e.g. 'Explain this proof', 'Quiz me on thermodynamics')..."
-          value={inputQuery}
-          onChange={(e) => setInputQuery(e.target.value)}
-          className="flex-1 px-4 py-2 bg-transparent text-sm text-slate-100 placeholder-slate-500 focus:outline-none"
-        />
-
-        <button
-          type="submit"
-          disabled={!inputQuery.trim() || isLoading}
-          className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-md"
+      {/* Input Area */}
+      <div className="p-4 bg-slate-900 border-t border-slate-800">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSendMessage();
+          }}
+          className="max-w-4xl mx-auto flex items-center gap-2"
         >
-          <Send className="w-3.5 h-3.5" />
-          <span>Ask</span>
-        </button>
-      </form>
+          <input
+            type="text"
+            placeholder="Ask anything (e.g. explain inductive effect, calculate torque, solve reaction)..."
+            value={inputQuery}
+            onChange={(e) => setInputQuery(e.target.value)}
+            className="flex-1 px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+
+          <button
+            type="submit"
+            disabled={!inputQuery.trim() || isLoading}
+            className="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white font-semibold text-xs sm:text-sm rounded-xl shadow-lg shadow-blue-600/20 transition cursor-pointer flex items-center gap-1.5"
+          >
+            <Send className="w-4 h-4" />
+            <span className="hidden sm:inline">Ask Mentor</span>
+          </button>
+        </form>
+      </div>
     </div>
   );
 };

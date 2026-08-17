@@ -17,15 +17,21 @@ import {
   GraduationCap,
   Filter,
   CheckCircle2,
+  BookmarkPlus,
+  Zap,
+  Target,
+  FlaskConical,
+  Sigma,
+  Stethoscope,
+  Atom,
 } from 'lucide-react';
 
 export const Navbar: React.FC = () => {
   const {
     activeTab,
     setActiveTab,
-    subjects,
-    selectedSubjectId,
-    setSelectedSubjectId,
+    examMode,
+    setExamMode,
     searchQuery,
     setSearchQuery,
     addNote,
@@ -33,60 +39,88 @@ export const Navbar: React.FC = () => {
     studyStreakDays,
     exportWorkspaceData,
     resetToSampleData,
+    mistakeLogs,
   } = useWorkspace();
 
   const [isResetConfirmOpen, setIsResetConfirmOpen] = useState(false);
 
-  const tabs: { id: ActiveTab; label: string; icon: React.ElementType }[] = [
-    { id: 'notes', label: 'Notes Workspace', icon: BookOpen },
-    { id: 'tests', label: 'Tests & Exams', icon: FileCheck },
+  const tabs: { id: ActiveTab; label: string; icon: React.ElementType; badge?: string | number }[] = [
+    { id: 'jee', label: 'JEE Hub (PCM)', icon: Atom },
+    { id: 'neet', label: 'NEET Hub (PCB)', icon: Stethoscope },
+    { id: 'tests', label: 'NTA CBT Tests', icon: FileCheck },
+    {
+      id: 'mistakes',
+      label: 'Mistake Notebook (Galti Diary)',
+      icon: BookmarkPlus,
+      badge: mistakeLogs.filter((m) => !m.isResolved).length || undefined,
+    },
+    { id: 'formulas', label: 'Formula Deck', icon: Zap },
+    { id: 'planner', label: 'Daily Goals & Focus', icon: Target },
+    { id: 'notes', label: 'NCERT Notes', icon: BookOpen },
     { id: 'flashcards', label: 'Flashcards', icon: Layers },
-    { id: 'focus', label: 'Focus & Tasks', icon: Clock },
-    { id: 'tutor', label: 'AI Tutor', icon: Bot },
-    { id: 'analytics', label: 'Mastery', icon: BarChart3 },
+    { id: 'tutor', label: 'AI Rank Mentor', icon: Bot },
+    { id: 'analytics', label: 'Performance & Rank', icon: BarChart3 },
   ];
-
-  const handleQuickNewNote = () => {
-    const newNote = addNote({
-      title: 'Untitled Note',
-      subjectId: selectedSubjectId || subjects[0]?.id || 'cs-algo',
-    });
-    setActiveTab('notes');
-  };
 
   return (
     <header className="sticky top-0 z-40 bg-slate-900/95 backdrop-blur border-b border-slate-800 text-slate-100">
       {/* Primary Top Bar */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 gap-3">
           
-          {/* Logo & Brand */}
+          {/* Logo & Brand & Exam Switcher */}
           <div className="flex items-center gap-3 shrink-0">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-blue-500 flex items-center justify-center shadow-lg shadow-indigo-500/20 text-white font-bold">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-emerald-500 flex items-center justify-center shadow-lg shadow-blue-500/20 text-white font-bold">
               <GraduationCap className="w-6 h-6" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-bold text-lg text-white tracking-tight">StudyForge</span>
-                <span className="text-[10px] uppercase font-semibold px-2 py-0.5 bg-indigo-500/20 text-indigo-300 rounded border border-indigo-500/30">
-                  Workspace
+                <span className="font-bold text-base sm:text-lg text-white tracking-tight">RankForge</span>
+                <span className="text-[10px] uppercase font-bold px-1.5 py-0.5 bg-blue-500/20 text-blue-300 rounded border border-blue-500/30">
+                  JEE • NEET
                 </span>
               </div>
-              <p className="text-xs text-slate-400 hidden sm:block">Smart Notes & Test Engine for Students</p>
+              <p className="text-[11px] text-slate-400 hidden sm:block">All-in-One Competitive Exam Prep Hub</p>
+            </div>
+
+            {/* Quick Exam Mode Toggle Switch */}
+            <div className="ml-2 hidden lg:flex items-center bg-slate-950 p-1 rounded-xl border border-slate-800">
+              <button
+                onClick={() => setExamMode('jee')}
+                className={`px-3 py-1 rounded-lg text-xs font-bold transition cursor-pointer flex items-center gap-1.5 ${
+                  examMode === 'jee'
+                    ? 'bg-blue-600 text-white shadow-sm'
+                    : 'text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                <Atom className="w-3.5 h-3.5" />
+                JEE Main/Adv
+              </button>
+              <button
+                onClick={() => setExamMode('neet')}
+                className={`px-3 py-1 rounded-lg text-xs font-bold transition cursor-pointer flex items-center gap-1.5 ${
+                  examMode === 'neet'
+                    ? 'bg-emerald-600 text-white shadow-sm'
+                    : 'text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                <Stethoscope className="w-3.5 h-3.5" />
+                NEET UG
+              </button>
             </div>
           </div>
 
           {/* Global Search Bar */}
-          <div className="flex-1 max-w-md hidden md:block">
+          <div className="flex-1 max-w-sm hidden md:block">
             <div className="relative">
               <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
               <input
                 type="text"
                 id="global-search-input"
-                placeholder="Search notes, tests, formulas, flashcards..."
+                placeholder="Search PYQs, formulas, mistakes, chapters..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-4 py-1.5 text-sm bg-slate-800/80 border border-slate-700 rounded-lg text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                className="w-full pl-9 pr-4 py-1.5 text-xs sm:text-sm bg-slate-800/80 border border-slate-700 rounded-xl text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition"
               />
               {searchQuery && (
                 <button
@@ -99,113 +133,90 @@ export const Navbar: React.FC = () => {
             </div>
           </div>
 
-          {/* Quick Actions & Status */}
-          <div className="flex items-center gap-2 shrink-0">
-            {/* Subject Filter Pill */}
-            <div className="relative hidden lg:flex items-center">
-              <Filter className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 pointer-events-none" />
-              <select
-                id="navbar-subject-filter"
-                value={selectedSubjectId || 'all'}
-                onChange={(e) => setSelectedSubjectId(e.target.value === 'all' ? null : e.target.value)}
-                className="pl-8 pr-3 py-1.5 text-xs bg-slate-800 border border-slate-700 rounded-lg text-slate-200 hover:border-slate-600 focus:outline-none focus:ring-1 focus:ring-indigo-500 cursor-pointer appearance-none"
-              >
-                <option value="all">All Subjects</option>
-                {subjects.map((sub) => (
-                  <option key={sub.id} value={sub.id}>
-                    {sub.code}: {sub.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
+          {/* Right Action Icons & Streak */}
+          <div className="flex items-center gap-2 sm:gap-3">
             {/* Streak Counter */}
-            <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-300 rounded-lg text-xs font-semibold" title="Daily Study Streak">
-              <Flame className="w-4 h-4 text-amber-400 fill-amber-400" />
-              <span>{studyStreakDays}d streak</span>
+            <div
+              className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-orange-500/10 border border-orange-500/20 text-orange-400 text-xs font-semibold"
+              title="Consecutive daily study streak"
+            >
+              <Flame className="w-4 h-4 fill-current animate-pulse" />
+              <span>{studyStreakDays}d Streak</span>
             </div>
 
-            {/* AI Test Creator Button */}
+            {/* AI PYQ Drill generator button */}
             <button
-              id="nav-btn-ai-quiz"
               onClick={() => setIsAiQuizModalOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white rounded-lg text-xs font-semibold shadow-md shadow-indigo-600/20 transition transform active:scale-95 cursor-pointer"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs font-semibold rounded-xl shadow-md shadow-blue-600/20 transition cursor-pointer"
             >
-              <Sparkles className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Generate AI Test</span>
-              <span className="sm:hidden">AI Test</span>
+              <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+              <span className="hidden sm:inline">AI Drill Generator</span>
             </button>
 
-            {/* New Note Button */}
+            {/* Export backup */}
             <button
-              id="nav-btn-new-note"
-              onClick={handleQuickNewNote}
-              className="flex items-center gap-1 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-lg text-xs font-medium transition cursor-pointer"
+              onClick={exportWorkspaceData}
+              className="p-2 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded-xl border border-slate-700 transition cursor-pointer"
+              title="Backup your notes, mock scores & mistake diary"
             >
-              <Plus className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Note</span>
+              <Download className="w-4 h-4" />
             </button>
 
-            {/* Backup / Export Menu */}
-            <div className="relative group">
-              <button
-                id="nav-btn-export"
-                onClick={exportWorkspaceData}
-                className="p-1.5 text-slate-400 hover:text-slate-200 hover:bg-slate-800 rounded-lg border border-slate-800 transition"
-                title="Export Workspace JSON Backup"
-              >
-                <Download className="w-4 h-4" />
-              </button>
-            </div>
-
-            {/* Reset Data Confirmation */}
+            {/* Reset data */}
             <button
-              id="nav-btn-reset"
               onClick={() => setIsResetConfirmOpen(true)}
-              className="p-1.5 text-slate-400 hover:text-rose-400 hover:bg-slate-800 rounded-lg border border-slate-800 transition"
-              title="Reset to Sample Notes & Tests"
+              className="p-2 text-slate-400 hover:text-rose-400 bg-slate-800 hover:bg-slate-700 rounded-xl border border-slate-700 transition cursor-pointer"
+              title="Reset to fresh JEE & NEET starter packs"
             >
               <RotateCcw className="w-4 h-4" />
             </button>
           </div>
         </div>
 
-        {/* Tab Navigation Menu */}
-        <nav className="flex space-x-1 sm:space-x-2 overflow-x-auto no-scrollbar py-1 -mb-px border-t border-slate-800/80">
+        {/* Secondary Navigation Scrollable Tabs Bar */}
+        <div className="flex items-center space-x-1 overflow-x-auto no-scrollbar py-2 border-t border-slate-800/80">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
             return (
               <button
                 key={tab.id}
-                id={`tab-${tab.id}`}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-3 py-2 text-xs sm:text-sm font-medium rounded-lg whitespace-nowrap transition cursor-pointer ${
+                className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition cursor-pointer ${
                   isActive
-                    ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+                    ? 'bg-blue-600 text-white shadow-sm'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
                 }`}
               >
-                <Icon className={`w-4 h-4 ${isActive ? 'text-indigo-400' : 'text-slate-400'}`} />
+                <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-slate-400'}`} />
                 <span>{tab.label}</span>
+                {tab.badge !== undefined && (
+                  <span
+                    className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
+                      isActive ? 'bg-white text-blue-700' : 'bg-rose-500/30 text-rose-300'
+                    }`}
+                  >
+                    {tab.badge}
+                  </span>
+                )}
               </button>
             );
           })}
-        </nav>
+        </div>
       </div>
 
-      {/* Reset Confirmation Dialog */}
+      {/* Reset Confirmation Modal */}
       {isResetConfirmOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-xl max-w-md w-full p-6 shadow-2xl text-slate-200">
-            <h3 className="text-lg font-bold text-white mb-2">Reset to Sample Student Data?</h3>
-            <p className="text-sm text-slate-400 mb-6">
-              This will reload the rich pre-configured student subjects, notes, tests, flashcard decks, and task records.
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-sm p-6 space-y-4 shadow-2xl">
+            <h3 className="text-base font-bold text-white">Reset Preparation Workspace?</h3>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              This will restore all authentic JEE and NEET syllabus mock tests, formula cards, chapter weightages, and notes to fresh status.
             </p>
-            <div className="flex justify-end gap-3">
+            <div className="flex justify-end gap-2 pt-2">
               <button
                 onClick={() => setIsResetConfirmOpen(false)}
-                className="px-4 py-2 text-sm bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg transition"
+                className="px-4 py-2 bg-slate-800 text-slate-300 text-xs rounded-xl"
               >
                 Cancel
               </button>
@@ -214,9 +225,9 @@ export const Navbar: React.FC = () => {
                   resetToSampleData();
                   setIsResetConfirmOpen(false);
                 }}
-                className="px-4 py-2 text-sm bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded-lg transition"
+                className="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold rounded-xl shadow-md"
               >
-                Confirm Reset
+                Yes, Reset All
               </button>
             </div>
           </div>

@@ -10,6 +10,10 @@ import {
   ActiveTab,
   Question,
   DifficultyLevel,
+  MistakeLog,
+  FormulaCard,
+  ChapterWeightage,
+  ExamMode,
 } from '../types';
 import {
   INITIAL_SUBJECTS,
@@ -19,8 +23,17 @@ import {
   INITIAL_TASKS,
   INITIAL_ATTEMPTS,
 } from '../data/initialData';
+import {
+  INITIAL_MISTAKE_LOGS,
+  INITIAL_FORMULA_CARDS,
+  CHAPTER_WEIGHTAGES,
+} from '../data/competitiveData';
 
 interface WorkspaceContextType {
+  // Exam Mode
+  examMode: ExamMode;
+  setExamMode: (mode: ExamMode) => void;
+
   // Navigation & filter state
   activeTab: ActiveTab;
   setActiveTab: (tab: ActiveTab) => void;
@@ -70,12 +83,22 @@ interface WorkspaceContextType {
   deleteDeck: (id: string) => void;
   updateCardState: (deckId: string, cardId: string, state: 'learning' | 'review' | 'mastered') => void;
 
-  // Tasks
+  // Tasks & Daily Planner
   tasks: StudyTask[];
   addTask: (task: Omit<StudyTask, 'id'>) => StudyTask;
   updateTask: (id: string, updates: Partial<StudyTask>) => void;
   deleteTask: (id: string) => void;
   toggleTaskStatus: (id: string) => void;
+
+  // Mistake Notebook (Galti Diary)
+  mistakeLogs: MistakeLog[];
+  addMistakeLog: (log: Omit<MistakeLog, 'id' | 'dateAdded'>) => MistakeLog;
+  toggleMistakeResolved: (id: string) => void;
+  deleteMistakeLog: (id: string) => void;
+
+  // High-Yield Reference Data
+  formulas: FormulaCard[];
+  chapterWeightages: ChapterWeightage[];
 
   // Focus & Study Stats
   focusSessions: FocusSession[];
@@ -102,20 +125,38 @@ interface WorkspaceContextType {
 const WorkspaceContext = createContext<WorkspaceContextType | undefined>(undefined);
 
 const STORAGE_KEYS = {
-  SUBJECTS: 'sw_subjects_v1',
-  NOTES: 'sw_notes_v1',
-  TESTS: 'sw_tests_v1',
-  DECKS: 'sw_decks_v1',
-  TASKS: 'sw_tasks_v1',
-  ATTEMPTS: 'sw_attempts_v1',
-  FOCUS: 'sw_focus_v1',
-  STREAK: 'sw_streak_v1',
+  EXAM_MODE: 'rf_exam_mode_v2',
+  SUBJECTS: 'rf_subjects_v2',
+  NOTES: 'rf_notes_v2',
+  TESTS: 'rf_tests_v2',
+  DECKS: 'rf_decks_v2',
+  TASKS: 'rf_tasks_v2',
+  ATTEMPTS: 'rf_attempts_v2',
+  FOCUS: 'rf_focus_v2',
+  STREAK: 'rf_streak_v2',
+  MISTAKES: 'rf_mistakes_v2',
 };
 
 export const WorkspaceProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [activeTab, setActiveTab] = useState<ActiveTab>('notes');
+  const [examMode, setExamModeState] = useState<ExamMode>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.EXAM_MODE);
+      return (saved as ExamMode) || 'jee';
+    } catch {
+      return 'jee';
+    }
+  });
+
+  const [activeTab, setActiveTab] = useState<ActiveTab>('jee');
   const [selectedSubjectId, setSelectedSubjectId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
+
+  const setExamMode = (mode: ExamMode) => {
+    setExamModeState(mode);
+    localStorage.setItem(STORAGE_KEYS.EXAM_MODE, mode);
+    if (activeTab === 'jee' && mode === 'neet') setActiveTab('neet');
+    if (activeTab === 'neet' && mode === 'jee') setActiveTab('jee');
+  };
 
   // Modals state
   const [isAiQuizModalOpen, setIsAiQuizModalOpen] = useState(false);
@@ -193,6 +234,15 @@ export const WorkspaceProvider: React.FC<{ children: ReactNode }> = ({ children 
     }
   });
 
+  const [mistakeLogs, setMistakeLogs] = useState<MistakeLog[]>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.MISTAKES);
+      return saved ? JSON.parse(saved) : INITIAL_MISTAKE_LOGS;
+    } catch {
+      return INITIAL_MISTAKE_LOGS;
+    }
+  });
+
   const [focusSessions, setFocusSessions] = useState<FocusSession[]>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.FOCUS);
@@ -237,6 +287,10 @@ export const WorkspaceProvider: React.FC<{ children: ReactNode }> = ({ children 
   }, [tasks]);
 
   useEffect(() => {
+    localStorage.setItem(STORAGE_KEYS.MISTAKES, JSON.stringify(mistakeLogs));
+  }, [mistakeLogs]);
+
+  useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.FOCUS, JSON.stringify(focusSessions));
   }, [focusSessions]);
 
@@ -245,7 +299,7 @@ export const WorkspaceProvider: React.FC<{ children: ReactNode }> = ({ children 
   }, [studyStreakDays]);
 
   // Total Study Minutes
-  const totalStudyMinutes = focusSessions.reduce((sum, s) => sum + (s.durationMinutes || 0), 0) + 145; // base offset
+  const totalStudyMinutes = focusSessions.reduce((sum, s) => sum + (s.durationMinutes || 0), 0) + 180;
 
   // Subject Actions
   const addSubject = (data: Omit<Subject, 'id'>): Subject => {
@@ -270,9 +324,9 @@ export const WorkspaceProvider: React.FC<{ children: ReactNode }> = ({ children 
     const newNote: Note = {
       id: 'note-' + Date.now(),
       title: data.title || 'Untitled Note',
-      content: data.content || '# New Note\n\nStart typing here...',
-      subjectId: data.subjectId || subjects[0]?.id || 'cs-algo',
-      tags: data.tags || ['Study'],
+      content: data.content || '# High-Yield Key Points\n\n- Write formulas and theory here...',
+      subjectId: data.subjectId || subjects[0]?.id || 'subj-phy',
+      tags: data.tags || ['Study', 'Formula'],
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       isFavorite: false,
@@ -420,12 +474,33 @@ export const WorkspaceProvider: React.FC<{ children: ReactNode }> = ({ children 
     );
   };
 
+  // Mistake Notebook Actions
+  const addMistakeLog = (log: Omit<MistakeLog, 'id' | 'dateAdded'>): MistakeLog => {
+    const newLog: MistakeLog = {
+      ...log,
+      id: 'mistake-' + Date.now() + Math.random().toString(36).slice(2, 6),
+      dateAdded: new Date().toISOString(),
+    };
+    setMistakeLogs((prev) => [newLog, ...prev]);
+    return newLog;
+  };
+
+  const toggleMistakeResolved = (id: string) => {
+    setMistakeLogs((prev) =>
+      prev.map((m) => (m.id === id ? { ...m, isResolved: !m.isResolved } : m))
+    );
+  };
+
+  const deleteMistakeLog = (id: string) => {
+    setMistakeLogs((prev) => prev.filter((m) => m.id !== id));
+  };
+
   // Focus Actions
   const logFocusSession = (durationMinutes: number, subjectId?: string, notes?: string) => {
     const session: FocusSession = {
       id: 'focus-' + Date.now(),
       durationMinutes,
-      subjectId: subjectId || (subjects[0]?.id ?? 'general'),
+      subjectId: subjectId || (subjects[0]?.id ?? 'subj-phy'),
       timestamp: new Date().toISOString(),
       completed: true,
       notes,
@@ -443,6 +518,7 @@ export const WorkspaceProvider: React.FC<{ children: ReactNode }> = ({ children 
     setDecks(INITIAL_DECKS);
     setSelectedDeckId(INITIAL_DECKS[0].id);
     setTasks(INITIAL_TASKS);
+    setMistakeLogs(INITIAL_MISTAKE_LOGS);
     setTestAttempts(INITIAL_ATTEMPTS);
     setActiveTest(null);
     setLatestAttempt(null);
@@ -450,13 +526,14 @@ export const WorkspaceProvider: React.FC<{ children: ReactNode }> = ({ children 
 
   const exportWorkspaceData = () => {
     const backup = {
-      version: '1.0',
+      version: '2.0',
       exportedAt: new Date().toISOString(),
       subjects,
       notes,
       tests,
       decks,
       tasks,
+      mistakeLogs,
       testAttempts,
       focusSessions,
       studyStreakDays,
@@ -465,7 +542,7 @@ export const WorkspaceProvider: React.FC<{ children: ReactNode }> = ({ children 
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `study_workspace_backup_${new Date().toISOString().slice(0, 10)}.json`;
+    a.download = `rankforge_jee_neet_backup_${new Date().toISOString().slice(0, 10)}.json`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -479,6 +556,7 @@ export const WorkspaceProvider: React.FC<{ children: ReactNode }> = ({ children 
         if (data.tests) setTests(data.tests);
         if (data.decks) setDecks(data.decks);
         if (data.tasks) setTasks(data.tasks);
+        if (data.mistakeLogs) setMistakeLogs(data.mistakeLogs);
         if (data.testAttempts) setTestAttempts(data.testAttempts);
         return true;
       }
@@ -491,6 +569,8 @@ export const WorkspaceProvider: React.FC<{ children: ReactNode }> = ({ children 
   return (
     <WorkspaceContext.Provider
       value={{
+        examMode,
+        setExamMode,
         activeTab,
         setActiveTab,
         selectedSubjectId,
@@ -533,6 +613,12 @@ export const WorkspaceProvider: React.FC<{ children: ReactNode }> = ({ children 
         updateTask,
         deleteTask,
         toggleTaskStatus,
+        mistakeLogs,
+        addMistakeLog,
+        toggleMistakeResolved,
+        deleteMistakeLog,
+        formulas: INITIAL_FORMULA_CARDS,
+        chapterWeightages: CHAPTER_WEIGHTAGES,
         focusSessions,
         logFocusSession,
         studyStreakDays,

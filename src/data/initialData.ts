@@ -1,471 +1,304 @@
 import { Subject, Note, Test, FlashcardDeck, StudyTask, TestAttempt } from '../types';
+import { COMPETITIVE_SUBJECTS, INITIAL_STUDY_TASKS } from './competitiveData';
+import { JEE_SAMPLE_QUESTIONS, JEE_FULL_MOCK_TEST } from '../components/jee/jeeData';
+import { NEET_SAMPLE_QUESTIONS, NEET_FULL_MOCK_TEST } from '../components/neet/neetData';
 
-export const INITIAL_SUBJECTS: Subject[] = [
-  {
-    id: 'cs-algo',
-    name: 'Computer Science & Algorithms',
-    code: 'CS 301',
-    color: '#3B82F6', // Blue
-    description: 'Data structures, asymptotic complexity, graph traversal, and dynamic programming.',
-    iconName: 'Code2',
-  },
-  {
-    id: 'chem-org',
-    name: 'Organic & Bio Chemistry',
-    code: 'CHEM 204',
-    color: '#10B981', // Emerald
-    description: 'Reaction mechanisms, functional groups, stereochemistry, and thermodynamics.',
-    iconName: 'FlaskConical',
-  },
-  {
-    id: 'math-calc',
-    name: 'Calculus & Linear Algebra',
-    code: 'MATH 220',
-    color: '#8B5CF6', // Purple
-    description: 'Multivariable calculus, eigenvectors, matrices, and partial derivatives.',
-    iconName: 'Sigma',
-  },
-  {
-    id: 'bio-neuro',
-    name: 'Neuroscience & Cellular Biology',
-    code: 'BIO 115',
-    color: '#F59E0B', // Amber
-    description: 'Action potentials, synaptic transmission, cell membranes, and genetics.',
-    iconName: 'Dna',
-  },
-];
+export const INITIAL_SUBJECTS: Subject[] = COMPETITIVE_SUBJECTS;
 
 export const INITIAL_NOTES: Note[] = [
   {
     id: 'note-1',
-    title: 'Graph Traversal: BFS vs DFS & Shortest Path Algorithms',
-    subjectId: 'cs-algo',
-    tags: ['Graphs', 'BFS', 'DFS', 'Dijkstra', 'Complexity'],
-    createdAt: '2026-08-10T10:00:00.000Z',
+    title: 'Current Electricity: Kirchhoff Laws, Wheatstone & RC Circuits',
+    subjectId: 'subj-phy',
+    chapter: 'Current Electricity',
+    examTag: 'BOTH',
+    tags: ['Physics', 'Kirchhoff', 'Wheatstone', 'RC Circuits', 'Class 12'],
+    createdAt: '2026-08-12T10:00:00.000Z',
     updatedAt: '2026-08-16T14:30:00.000Z',
     isFavorite: true,
-    aiSummary: `**Executive Summary**: Graph traversal algorithms systematically explore vertices and edges. Breadth-First Search (BFS) uses a FIFO queue and finds the unweighted shortest path ($O(V+E)$). Depth-First Search (DFS) uses a LIFO stack/recursion and is optimal for topological sorting, cycle detection, and connected components.
+    aiSummary: `**Key Summary**: Current electricity contributes 2-3 questions per exam shift in JEE and 3 questions in NEET.
+- **Kirchhoff's Junction Law**: $\\sum I_{in} = \\sum I_{out}$ (Conservation of Charge).
+- **Kirchhoff's Loop Law**: $\\sum \\Delta V = 0$ around closed loop (Conservation of Energy).
+- **Wheatstone Bridge**: Balanced when $\\frac{R_1}{R_2} = \\frac{R_3}{R_4} \\implies I_G = 0$.
+- **RC Charging Circuit**: $q(t) = Q_{max}(1 - e^{-t/RC})$, Time constant $\\tau = RC$. At $t = \\tau$, $q = 0.63 Q_{max}$.`,
+    content: `# Current Electricity: High-Yield Revision Notes
 
-**Key Formulas & Complexities**:
-- Time Complexity: $\\mathcal{O}(V + E)$ where $V$ is vertices and $E$ is edges.
-- Space Complexity: $\\mathcal{O}(V)$ to store visited array and queue/stack state.
-- Dijkstra's Algorithm (Weighted graphs without negative weights): $\\mathcal{O}((V + E) \\log V)$ using a Min-Heap.`,
-    content: `# Graph Traversal: BFS vs DFS & Shortest Path
+## 1. Electric Current & Drift Velocity ($v_d$)
+The relation between current ($I$) and drift velocity ($v_d$) is:
+$$I = n e A v_d$$
+Where:
+- $n = \\text{free electron density}$
+- $e = 1.6 \\times 10^{-19}\\text{ C}$
+- $A = \\text{cross-sectional area}$
+- $v_d = \\frac{e E \\tau}{m}$ ($\\tau = \\text{relaxation time}$)
 
-## 1. Breadth-First Search (BFS)
-Breadth-First Search explores graph nodes level-by-level starting from a root node. It uses a **FIFO Queue** data structure.
-
-### Core Properties
-- **Guaranteed Shortest Path** in unweighted graphs.
-- **Time Complexity**: $\\mathcal{O}(V + E)$
-- **Space Complexity**: $\\mathcal{O}(V)$ for the queue and visited set.
-
-\`\`\`python
-from collections import deque
-
-def bfs(graph, start):
-    visited = set([start])
-    queue = deque([start])
-    traversal_order = []
-    
-    while queue:
-        vertex = queue.popleft()
-        traversal_order.append(vertex)
-        
-        for neighbor in graph[vertex]:
-            if neighbor not in visited:
-                visited.add(neighbor)
-                queue.append(neighbor)
-                
-    return traversal_order
-\`\`\`
+### Current Density ($\\vec{J}$) and Microscopic Ohm's Law
+$$\\vec{J} = \\sigma \\vec{E} = \\frac{1}{\\rho} \\vec{E}$$
+$$\\rho = \\frac{m}{n e^2 \\tau}$$
 
 ---
 
-## 2. Depth-First Search (DFS)
-Depth-First Search plunges deep into branch nodes before backtracking. It relies on recursion or an explicit **LIFO Stack**.
-
-### Primary Use Cases
-1. **Topological Sorting** for Directed Acyclic Graphs (DAGs).
-2. **Cycle Detection**: Using 3-color state tracking (White/Gray/Black).
-3. **Maze Solving** & Connected Components discovery.
+## 2. Kirchhoff's Laws
+1. **Kirchhoff's Current Law (KCL)**: At any junction, $\\sum I = 0$. **Physical basis:** Law of Conservation of Electric Charge.
+2. **Kirchhoff's Voltage Law (KVL)**: Around any closed electrical loop, $\\sum \\Delta V = 0$. **Physical basis:** Law of Conservation of Energy.
 
 ---
 
-## 3. Dijkstra's Algorithm (Shortest Path with Non-Negative Weights)
-- Employs a **Priority Queue (Min-Heap)** to greedily expand the minimum known distance vertex.
-- **Time Complexity**: $\\mathcal{O}((V + E) \\log V)$ with binary heap.
-- *Caution*: Does not work with negative edge weights (use Bellman-Ford for negative weights).
+## 3. Cells in Series, Parallel & Mixed Grouping
+- **$n$ Identical cells in series**: $E_{eq} = nE, \\quad r_{eq} = nr, \\quad I = \\frac{nE}{R + nr}$
+- **$m$ Identical cells in parallel**: $E_{eq} = E, \\quad r_{eq} = \\frac{r}{m}, \\quad I = \\frac{E}{R + r/m}$
+- **Maximum Power Transfer Theorem**: Maximum power is transferred to external load when $R = r_{internal}$.
+$$P_{max} = \\frac{E^2}{4r}$$
 
-### Quick Comparison Matrix
-| Algorithm | Data Structure | Unweighted Shortest Path | Cycle Detection |
-| :--- | :--- | :--- | :--- |
-| **BFS** | Queue (FIFO) | Yes | Yes (Bipartite check) |
-| **DFS** | Stack (LIFO) | No | Yes (Back edges) |
-| **Dijkstra** | Min-Heap | Weighted (non-neg) | N/A |
+---
+
+## 4. RC Charging & Discharging Circuits
+- **Charging**:
+  $$q(t) = Q_0 (1 - e^{-t/RC})$$
+  $$I(t) = I_0 e^{-t/RC}$$
+- **Discharging**:
+  $$q(t) = Q_0 e^{-t/RC}$$
+- **Energy Stored in Capacitor at Steady State**: $U = \\frac{1}{2} C V^2$. Total work done by battery is $W = Q V = C V^2$. Half of the energy ($50\\%$) is always dissipated as heat in resistor!
 `,
   },
   {
     id: 'note-2',
-    title: 'Nucleophilic Substitution: SN1 vs SN2 Mechanisms',
-    subjectId: 'chem-org',
-    tags: ['SN1', 'SN2', 'Kinetics', 'Stereochemistry', 'Organic'],
-    createdAt: '2026-08-12T09:15:00.000Z',
+    title: 'General Organic Chemistry (GOC): Intermediates, Inductive & Resonance',
+    subjectId: 'subj-chem',
+    chapter: 'General Organic Chemistry',
+    examTag: 'BOTH',
+    tags: ['Chemistry', 'GOC', 'Carbocation', 'Resonance', 'Acidity', 'Class 11'],
+    createdAt: '2026-08-13T09:15:00.000Z',
     updatedAt: '2026-08-15T16:20:00.000Z',
     isFavorite: true,
-    aiSummary: `**Core Distinction**: SN1 is a stepwise unimolecular reaction favored by tertiary substrates and polar protic solvents, leading to carbocation intermediate and racemization. SN2 is a concerted bimolecular reaction favored by primary substrates and polar aprotic solvents, resulting in complete inversion of stereochemistry (Walden Inversion).`,
-    content: `# Nucleophilic Substitution: SN1 vs SN2
+    aiSummary: `**Executive Summary**: GOC is the backbone of 15+ questions across Organic Chemistry in JEE & NEET.
+- **Carbocation Stability**: Aromatic (Tropylium) > Substituted Cyclopropylmethyl (CPM) > Resonance/Mesomeric (+M) > Hyperconjugation ($\\alpha$-H) > Inductive (+I).
+- **Aromaticity (Hückel's Rule)**: Planar, cyclic, continuous resonance with $(4n+2)\\pi$ electrons ($n=0, 1, 2, \\dots$).
+- **Acidic Strength**: Directly proportional to stability of conjugate base anion ($-M > -I$). Orthonitrophenol is stronger acid than para/meta due to ortho effect in benzoic acids.`,
+    content: `# General Organic Chemistry (GOC): Complete Blueprint
 
-## 1. SN1 (Substitution Nucleophilic Unimolecular)
-- **Stepwise Mechanism**:
-  1. *Rate-Determining Step (RDS)*: Leaving group departs, generating a planar $sp^2$ carbocation intermediate.
-  2. *Nucleophilic Attack*: Nucleophile attacks from either side with equal probability.
-- **Kinetics**: Rate $= k[Substrate]$ (First-order).
-- **Substrate Preference**: $3^\\circ > 2^\\circ \\gg 1^\\circ$ (stabilized by hyperconjugation and inductive effect).
-- **Stereochemistry**: **Racemization** (mixture of enantiomers).
-- **Solvent**: Polar Protic ($H_2O, EtOH, MeOH$) to stabilize carbocation and leaving group.
+## 1. Electronic Effects Hierarchy
+When comparing stability or acidity, always apply effects in this strict priority order:
+$$\\text{Aromaticity} > \\text{Mesomeric (+M/-M)} > \\text{Hyperconjugation} > \\text{Inductive (+I/-I)}$$
 
 ---
 
-## 2. SN2 (Substitution Nucleophilic Bimolecular)
-- **Concerted Mechanism**: One-step backside attack simultaneous with leaving group departure via pentacoordinate transition state.
-- **Kinetics**: Rate $= k[Substrate][Nucleophile]$ (Second-order).
-- **Substrate Preference**: $Methyl > 1^\\circ > 2^\\circ \\gg 3^\\circ$ (Steric hindrance inhibits backside attack).
-- **Stereochemistry**: **Complete Inversion of Configuration** (Walden Inversion, R to S or vice versa).
-- **Solvent**: Polar Aprotic ($DMSO, DMF, Acetone$) which solvates cations while leaving anions naked and reactive.
+## 2. Carbocation ($C^+$) Stability Order
+Carbocations are electron deficient ($6e^-$ in valence shell, $sp^2$ hybridized, planar):
+1. **Tropylium Cation**: $6\\pi e^-$, aromatic, extraordinary stability.
+2. **Cyclopropylmethyl Cation (CPM)**: Dancing resonance with bent $\\sigma$-orbitals.
+3. **Triphenylmethyl $\\text{Ph}_3C^+$**: Extensive resonance across 3 phenyl rings.
+4. **Aliphatic $3^\\circ > 2^\\circ > 1^\\circ > \\text{CH}_3^+$**: Governed by hyperconjugation number of $\\alpha$-hydrogens ($9\\alpha\\text{-H} > 6\\alpha\\text{-H} > 3\\alpha\\text{-H}$).
+
+---
+
+## 3. Acidic Strength of Organic Acids
+$$\\text{Acidic Strength} \\propto K_a \\propto \\frac{1}{pK_a} \\propto \\text{Stability of Conjugate Base Anion}$$
+- **Carboxylic Acids**: Substituted with electron-withdrawing groups (EWG, e.g. $-NO_2, -CN, -F$) stabilize $-COO^-$ via $-I$ and $-M$.
+- **Ortho Effect in Benzoic Acid**: Any ortho-substituted benzoic acid is stronger than benzoic acid due to steric inhibition of resonance (SIR).
+- **Phenols**: Picric acid ($2,4,6\\text{-trinitrophenol}$) has $pK_a \\approx 0.38$ (stronger than carboxylic acid!).
 `,
   },
   {
     id: 'note-3',
-    title: 'Eigenvalues, Eigenvectors & Diagonalization Matrix Theory',
-    subjectId: 'math-calc',
-    tags: ['LinearAlgebra', 'Eigenvalues', 'Diagonalization', 'Matrices'],
+    title: 'Definite Integrals: King Property, Leibniz Rule & Periodic Integrals',
+    subjectId: 'subj-math',
+    chapter: 'Definite Integrals',
+    examTag: 'JEE',
+    tags: ['Mathematics', 'Calculus', 'King Property', 'Leibniz', 'Class 12'],
     createdAt: '2026-08-14T11:00:00.000Z',
     updatedAt: '2026-08-15T18:00:00.000Z',
     isFavorite: false,
-    content: `# Eigenvalues and Eigenvectors
+    content: `# Definite Integrals: King Property & Scoring Rules
 
-## 1. Definition
-For a square matrix $A \\in \\mathbb{R}^{n \\times n}$, a non-zero vector $v$ is an **eigenvector** with associated **eigenvalue** $\\lambda$ if:
-$$A v = \\lambda v$$
-$$(A - \\lambda I) v = 0$$
+## 1. King Property (Most Tested in JEE Main)
+$$\\int_a^b f(x) dx = \\int_a^b f(a + b - x) dx$$
+Special case ($a = 0$):
+$$\\int_0^a f(x) dx = \\int_0^a f(a - x) dx$$
 
-Since $v \\neq 0$, the characteristic equation must satisfy:
-$$\\det(A - \\lambda I) = 0$$
+### Standard JEE Result
+$$\\int_0^{\\pi/2} \\frac{\\sin^n x}{\\sin^n x + \\cos^n x} dx = \\frac{\\pi}{4} \\quad (\\forall n \\in \\mathbb{R})$$
+$$\\int_0^{\\pi/2} \\ln(\\sin x) dx = -\\frac{\\pi}{2} \\ln 2$$
 
-## 2. Diagonalization Conditions
-A matrix $A$ of size $n \\times n$ is diagonalizable if and only if it has $n$ linearly independent eigenvectors.
-$$A = P D P^{-1}$$
-Where $P$ has eigenvectors as columns and $D$ is a diagonal matrix containing the corresponding eigenvalues.
+---
+
+## 2. Leibniz Rule for Differentiating Integrals
+If $I(x) = \\int_{u(x)}^{v(x)} f(x, t) dt$, then:
+$$\\frac{dI}{dx} = f(x, v(x)) \\cdot v'(x) - f(x, u(x)) \\cdot u'(x) + \\int_{u(x)}^{v(x)} \\frac{\\partial}{\\partial x} f(x, t) dt$$
 `,
   },
   {
     id: 'note-4',
-    title: 'Action Potential Genesis & Hodgkin-Huxley Model',
-    subjectId: 'bio-neuro',
-    tags: ['Neuroscience', 'ActionPotential', 'IonChannels', 'MembranePotential'],
+    title: 'Molecular Basis of Inheritance: Lac Operon, Genetic Code & DNA Replication',
+    subjectId: 'subj-botany',
+    chapter: 'Genetics & Molecular Biology',
+    examTag: 'NEET',
+    tags: ['Biology', 'Genetics', 'Lac Operon', 'NCERT Class 12'],
     createdAt: '2026-08-11T13:45:00.000Z',
     updatedAt: '2026-08-14T10:10:00.000Z',
-    isFavorite: false,
-    content: `# Action Potential Dynamics
+    isFavorite: true,
+    content: `# Molecular Basis of Inheritance: NCERT Direct Points
 
-## 1. Resting Membrane Potential
-- Maintained at roughly **-70 mV** by the $Na^+/K^+$ ATPase pump ($3\\, Na^+$ pumped out for every $2\\, K^+$ pumped in).
-- High intracellular $K^+$ concentration and high extracellular $Na^+$ and $Cl^-$ concentrations.
+## 1. Structure of DNA (Watson-Crick Double Helix)
+- Pitch of double helix: **3.4 nm** ($34\\text{ Å}$).
+- Number of base pairs per turn: **10 bp**; Distance between adjacent base pairs: **0.34 nm**.
+- Diameter of double helix: **2.0 nm**.
+- Purines: **Adenine (A)** & **Guanine (G)**. Pyrimidines: **Cytosine (C)**, **Thymine (T)** (5-methyluracil), and **Uracil (U)** (in RNA only).
 
-## 2. Phases of the Action Potential
-1. **Resting Phase**: Leak potassium channels predominate.
-2. **Threshold of Excitation**: Membrane depolarizes past approx **-55 mV**.
-3. **Depolarization Phase**: Voltage-gated $Na^+$ channels snap open, influx of $Na^+$ drives potential up to **+40 mV**.
-4. **Repolarization Phase**: Inactivation gates of $Na^+$ channels close; voltage-gated $K^+$ channels open, causing massive $K^+$ efflux.
-5. **Hyperpolarization (Undershoot)**: $K^+$ channels close slowly, membrane drops briefly to **-80 mV**.
-6. **Refractory Period**: Absolute vs Relative refractory periods limit maximum firing frequency.
+---
+
+## 2. The Lac Operon (Jacob & Monod)
+- **$i$ Gene**: Synthesizes the **Repressor protein** constitutively.
+- **Promoter ($p$)**: Binding site for RNA Polymerase.
+- **Operator ($o$)**: Binding site for Repressor protein.
+- **Structural Genes**:
+  - $z$ gene $\\rightarrow$ **$\\beta$-galactosidase** (hydrolyzes lactose into glucose + galactose).
+  - $y$ gene $\\rightarrow$ **Permease** (increases cell membrane permeability to $\\beta$-galactosides).
+  - $a$ gene $\\rightarrow$ **Transacetylase**.
+- **Inducer**: Allolactose (binds to repressor and inactivates it).
 `,
   },
 ];
 
 export const INITIAL_TESTS: Test[] = [
+  JEE_FULL_MOCK_TEST,
+  NEET_FULL_MOCK_TEST,
   {
-    id: 'test-1',
-    title: 'Graph Traversal & Dijkstra Mastery Exam',
-    description: 'Comprehensive test evaluating your understanding of BFS, DFS, shortest path algorithms, and complexity analysis.',
-    subjectId: 'cs-algo',
-    estimatedMinutes: 10,
+    id: 'test-phy-drill',
+    title: 'Physics High-Yield Practice Drill (Mechanics & Electrodynamics)',
+    description: 'Targeted +4 / -1 practice questions with step-by-step solutions.',
+    subjectId: 'subj-phy',
+    examType: 'CHAPTER_WISE',
+    targetExam: 'JEE',
+    estimatedMinutes: 45,
+    totalMarks: 40,
+    positiveMarks: 4,
+    negativeMarks: 1,
     difficulty: 'Medium',
-    noteIdRef: 'note-1',
-    tags: ['Graphs', 'BFS', 'Dijkstra', 'Algorithms'],
-    createdAt: '2026-08-15T10:00:00.000Z',
-    questions: [
-      {
-        id: 'q1',
-        type: 'mcq',
-        question: 'Which data structure is primarily utilized in Breadth-First Search (BFS) to preserve exploration order?',
-        options: ['Stack (LIFO)', 'Queue (FIFO)', 'Binary Search Tree', 'Priority Max-Heap'],
-        correctAnswer: 'Queue (FIFO)',
-        explanation: 'BFS systematically explores nodes layer by layer using a First-In-First-Out (FIFO) queue.',
-        hint: 'Think about how vertices at distance 1 are processed before vertices at distance 2.',
-        difficulty: 'Easy',
-        topicTag: 'BFS',
-      },
-      {
-        id: 'q2',
-        type: 'mcq',
-        question: "What is the time complexity of Dijkstra's algorithm implemented with a binary min-heap for a graph with V vertices and E edges?",
-        options: ['O(V^2)', 'O((V + E) log V)', 'O(V * E)', 'O(V log E)'],
-        correctAnswer: 'O((V + E) log V)',
-        explanation: 'Each vertex is extracted from the min-heap in O(log V) time, and each edge relaxation takes O(log V) to decrease key, yielding O((V + E) log V).',
-        hint: 'Consider the cost of extracting min and updating the heap for each edge.',
-        difficulty: 'Medium',
-        topicTag: 'Dijkstra',
-      },
-      {
-        id: 'q3',
-        type: 'tf',
-        question: "Dijkstra's algorithm guarantees the correct shortest path on graphs containing negative edge weights.",
-        options: ['True', 'False'],
-        correctAnswer: 'False',
-        explanation: "False! Dijkstra's greedy choice assumption fails with negative weights because a previously finalized vertex distance could be decreased later. Bellman-Ford must be used instead.",
-        hint: 'Greedy algorithms assume adding a non-negative edge will never decrease distance.',
-        difficulty: 'Medium',
-        topicTag: 'Shortest Path',
-      },
-      {
-        id: 'q4',
-        type: 'mcq',
-        question: 'Which traversal algorithm is best suited for producing a Topological Sort of a Directed Acyclic Graph (DAG)?',
-        options: ['Depth-First Search (DFS)', 'Breadth-First Search without in-degree array', 'Prim’s Algorithm', 'Kruskal’s Algorithm'],
-        correctAnswer: 'Depth-First Search (DFS)',
-        explanation: 'In DFS, nodes are pushed to an output stack upon finishing their subtree (post-order traversal), producing a topological order when reversed.',
-        hint: 'Think about finishing times and post-order traversal.',
-        difficulty: 'Medium',
-        topicTag: 'DFS',
-      },
-      {
-        id: 'q5',
-        type: 'short',
-        question: 'What is the worst-case space complexity of BFS on a tree with branching factor b and depth d?',
-        correctAnswer: 'O(b^d)',
-        explanation: 'In the worst case, the last level of the search tree must be held in the queue, requiring O(b^d) memory.',
-        hint: 'Count the number of leaf nodes at depth d.',
-        difficulty: 'Hard',
-        topicTag: 'Complexity',
-      },
-    ],
+    questions: JEE_SAMPLE_QUESTIONS.slice(0, 4),
+    createdAt: '2026-08-14T09:00:00.000Z',
+    tags: ['Physics', 'PYQ', 'NTA Pattern'],
   },
   {
-    id: 'test-2',
-    title: 'Organic Mechanisms: SN1 vs SN2 Diagnostic Quiz',
-    description: 'Test your understanding of nucleophilic substitution kinetics, transition states, solvents, and stereochemistry.',
-    subjectId: 'chem-org',
-    estimatedMinutes: 8,
+    id: 'test-bio-drill',
+    title: 'NEET Biology 360 NCERT Line-by-Line Sprint',
+    description: 'Rapid-fire NCERT biology questions covering Cell Biology, Genetics, and Human Physiology.',
+    subjectId: 'subj-botany',
+    examType: 'CHAPTER_WISE',
+    targetExam: 'NEET',
+    estimatedMinutes: 30,
+    totalMarks: 40,
+    positiveMarks: 4,
+    negativeMarks: 1,
     difficulty: 'Medium',
-    noteIdRef: 'note-2',
-    tags: ['Organic', 'Mechanisms', 'Stereochemistry'],
-    createdAt: '2026-08-16T11:00:00.000Z',
-    questions: [
-      {
-        id: 'cq1',
-        type: 'mcq',
-        question: 'Which reaction condition strongly favors an SN2 mechanism over an SN1 mechanism?',
-        options: [
-          'Tertiary alkyl halide in polar protic solvent',
-          'Primary alkyl halide with strong nucleophile in polar aprotic solvent',
-          'Tertiary alkyl halide with weak nucleophile',
-          'Secondary alkyl halide in boiling water',
-        ],
-        correctAnswer: 'Primary alkyl halide with strong nucleophile in polar aprotic solvent',
-        explanation: 'Primary substrates minimize steric hindrance for backside attack, strong nucleophiles accelerate bimolecular kinetics, and polar aprotic solvents leave nucleophiles unencumbered.',
-        hint: 'Look for low steric hindrance and naked nucleophiles.',
-        difficulty: 'Medium',
-        topicTag: 'SN2 Conditions',
-      },
-      {
-        id: 'cq2',
-        type: 'tf',
-        question: 'An SN2 reaction at a chiral carbon center results in complete inversion of configuration (Walden Inversion).',
-        options: ['True', 'False'],
-        correctAnswer: 'True',
-        explanation: 'True! Because the nucleophile must attack from the exact opposite side (180 degrees) of the leaving group, the umbrella flips, yielding 100% inversion.',
-        hint: 'Think about backside attack mechanism.',
-        difficulty: 'Easy',
-        topicTag: 'Stereochemistry',
-      },
-      {
-        id: 'cq3',
-        type: 'mcq',
-        question: 'What is the rate law for an SN1 substitution reaction?',
-        options: ['Rate = k[Substrate][Nucleophile]', 'Rate = k[Substrate]', 'Rate = k[Nucleophile]^2', 'Rate = k[Substrate]^2'],
-        correctAnswer: 'Rate = k[Substrate]',
-        explanation: 'SN1 stands for Substitution Nucleophilic Unimolecular. The rate-determining step only involves the unimolecular ionization of the substrate to form a carbocation.',
-        hint: 'Unimolecular indicates first-order kinetics with respect to the substrate.',
-        difficulty: 'Easy',
-        topicTag: 'Kinetics',
-      },
-      {
-        id: 'cq4',
-        type: 'short',
-        question: 'Name the planar intermediate formed during the rate-determining step of an SN1 reaction.',
-        correctAnswer: 'Carbocation',
-        explanation: 'A sp2-hybridized planar carbocation intermediate is formed upon loss of the leaving group.',
-        hint: 'A positively charged carbon species.',
-        difficulty: 'Easy',
-        topicTag: 'Intermediates',
-      },
-    ],
-  },
+    questions: NEET_SAMPLE_QUESTIONS.slice(0, 4),
+    createdAt: '2026-08-15T11:00:00.000Z',
+    tags: ['NEET', 'Botany', 'Zoology', 'NCERT Sprint'],
+  }
 ];
 
 export const INITIAL_DECKS: FlashcardDeck[] = [
   {
     id: 'deck-1',
-    title: 'Graph Theory & Complexity Flashcards',
-    subjectId: 'cs-algo',
-    noteIdRef: 'note-1',
-    lastReviewedAt: '2026-08-16T18:00:00.000Z',
+    title: 'Organic Chemistry Named Reactions & Reagents',
+    subjectId: 'subj-chem',
+    examTag: 'BOTH',
     cards: [
       {
         id: 'c1',
-        front: 'What is the time complexity of Breadth-First Search on an adjacency list?',
-        back: 'O(V + E)\nWhere V is the number of vertices and E is the number of edges.',
-        category: 'Complexity',
-        state: 'mastered',
+        front: 'What are the reagents and products of Aldol Condensation?',
+        back: 'Reagents: Aldehyde/Ketone having at least one α-hydrogen with dilute alkali (NaOH/KOH).\nProduct: β-hydroxy aldehyde (aldol) or β-hydroxy ketone (ketol), which on heating loses H2O to form α,β-unsaturated carbonyl.',
+        category: 'Organic Reactions',
+        state: 'review',
       },
       {
         id: 'c2',
-        front: 'Why cannot Dijkstra handle negative edge weights?',
-        back: 'Dijkstra assumes that once a vertex is removed from the priority queue, its distance is finalized. Negative weights can create a cheaper path later, violating this greedy assumption.',
-        category: 'Dijkstra',
-        state: 'learning',
+        front: 'What is Cannizzaro Reaction and which carbonyls undergo it?',
+        back: 'Disproportionation (redox) of aldehydes with NO α-hydrogen (e.g. Formaldehyde HCHO, Benzaldehyde PhCHO) when treated with concentrated (50%) NaOH.\nProducts: One molecule reduced to Alcohol (CH3OH/PhCH2OH), one oxidized to Carboxylate salt (HCOONa/PhCOONa).',
+        category: 'Organic Reactions',
+        state: 'mastered',
       },
       {
         id: 'c3',
-        front: 'What data structure is used to optimize Prim’s or Dijkstra’s algorithm?',
-        back: 'A Min-Priority Queue / Binary Min-Heap (or Fibonacci Heap).',
-        category: 'Data Structures',
-        state: 'review',
-      },
-      {
-        id: 'c4',
-        front: 'What is a Topological Sort and on what graph type is it valid?',
-        back: 'A linear ordering of vertices such that for every directed edge u -> v, u comes before v. Only valid on Directed Acyclic Graphs (DAGs).',
-        category: 'Topological Sort',
-        state: 'review',
-      },
-      {
-        id: 'c5',
-        front: 'Difference between Tree and Graph?',
-        back: 'A tree is a connected, undirected graph with no cycles. A tree with N vertices always has exactly N-1 edges.',
-        category: 'Definitions',
-        state: 'mastered',
+        front: 'What reagent is used in Reimer-Tiemann Reaction and what is the intermediate?',
+        back: 'Reagents: Phenol + CHCl3 + aqueous NaOH at 340 K.\nElectrophilic Intermediate: Dichlorocarbene (:CCl2) [neutral electrophile with 6 valence electrons].\nMajor Product: Salicylaldehyde (2-hydroxybenzaldehyde).',
+        category: 'Organic Reactions',
+        state: 'learning',
       },
     ],
   },
   {
     id: 'deck-2',
-    title: 'Organic Chemistry: Reagents & Mechanisms',
-    subjectId: 'chem-org',
-    noteIdRef: 'note-2',
-    lastReviewedAt: '2026-08-15T12:00:00.000Z',
+    title: 'Physics Constants, Dimensions & Formula Speed Cards',
+    subjectId: 'subj-phy',
+    examTag: 'BOTH',
+    cards: [
+      {
+        id: 'c4',
+        front: 'What is the De Broglie wavelength of an electron accelerated through potential V volts?',
+        back: 'λ = 12.27 / √V Å (or 1.227 / √V nm).\nDerived from λ = h / √(2m e V).',
+        category: 'Modern Physics',
+        state: 'mastered',
+      },
+      {
+        id: 'c5',
+        front: 'What is the relation between Permittivity (ε0), Permeability (μ0), and Speed of light (c)?',
+        back: 'c = 1 / √(μ0 ε0)\nDimensions of 1 / √(μ0 ε0) is [L T^-1] (velocity).',
+        category: 'Electrodynamics',
+        state: 'review',
+      },
+    ],
+  },
+  {
+    id: 'deck-3',
+    title: 'NEET Biology NCERT Exceptions & Numbers',
+    subjectId: 'subj-botany',
+    examTag: 'NEET',
     cards: [
       {
         id: 'c6',
-        front: 'What solvent category maximizes SN2 reaction rate?',
-        back: 'Polar Aprotic Solvents (e.g., DMSO, DMF, Acetone, Acetonitrile).\nThey solvate cations without hydrogen-bonding to anions, leaving the nucleophile highly reactive.',
-        category: 'Solvents',
+        front: 'What is the RQ (Respiratory Quotient) value of Tripalmitin fat?',
+        back: 'RQ = 0.7\nFormula: 2(C51H98O6) + 145 O2 -> 102 CO2 + 98 H2O. RQ = 102 / 145 = 0.7.',
+        category: 'Plant Physiology',
         state: 'learning',
       },
       {
         id: 'c7',
-        front: 'Stereochemical outcome of an SN1 reaction on a chiral center?',
-        back: 'Racemization (formation of a 1:1 mixture of enantiomers) because the nucleophile can attack the planar carbocation from the top or bottom face.',
-        category: 'Stereochemistry',
-        state: 'mastered',
-      },
-      {
-        id: 'c8',
-        front: 'Why are tertiary alkyl halides unreactive in SN2 reactions?',
-        back: 'Severe steric hindrance prevents the nucleophile from attacking the backside of the carbon-leaving group bond.',
-        category: 'Kinetics',
+        front: 'In human female menstrual cycle, on which day does LH surge and ovulation occur?',
+        back: 'Day 14 (Mid-cycle of standard 28-day cycle) induces rupture of mature Graafian follicle and release of secondary oocyte.',
+        category: 'Human Reproduction',
         state: 'mastered',
       },
     ],
   },
 ];
 
-export const INITIAL_TASKS: StudyTask[] = [
-  {
-    id: 'task-1',
-    title: 'Complete Algorithms Problem Set 4 (Dynamic Programming)',
-    subjectId: 'cs-algo',
-    dueDate: '2026-08-20',
-    priority: 'high',
-    status: 'in_progress',
-  },
-  {
-    id: 'task-2',
-    title: 'Review Organic Reaction Mechanisms for Midterm Exam',
-    subjectId: 'chem-org',
-    dueDate: '2026-08-22',
-    priority: 'high',
-    status: 'todo',
-    noteIdRef: 'note-2',
-  },
-  {
-    id: 'task-3',
-    title: 'Practice Multivariable Calculus Chain Rule drill',
-    subjectId: 'math-calc',
-    dueDate: '2026-08-24',
-    priority: 'medium',
-    status: 'todo',
-  },
-  {
-    id: 'task-4',
-    title: 'Review Synaptic Transmission Flashcard deck',
-    subjectId: 'bio-neuro',
-    dueDate: '2026-08-18',
-    priority: 'low',
-    status: 'completed',
-  },
-];
+export const INITIAL_TASKS: StudyTask[] = INITIAL_STUDY_TASKS;
 
 export const INITIAL_ATTEMPTS: TestAttempt[] = [
   {
-    id: 'attempt-1',
-    testId: 'test-1',
-    testTitle: 'Graph Traversal & Dijkstra Mastery Exam',
-    subjectId: 'cs-algo',
-    startedAt: '2026-08-16T15:00:00.000Z',
-    completedAt: '2026-08-16T15:08:42.000Z',
-    durationSeconds: 522,
+    id: 'att-1',
+    testId: JEE_FULL_MOCK_TEST.id,
+    testTitle: JEE_FULL_MOCK_TEST.title,
+    subjectId: 'subj-phy',
+    examType: 'JEE_MAIN',
+    startedAt: '2026-08-16T08:00:00.000Z',
+    completedAt: '2026-08-16T11:00:00.000Z',
+    durationSeconds: 10450,
     answers: {
-      q1: 'Queue (FIFO)',
-      q2: 'O((V + E) log V)',
-      q3: 'False',
-      q4: 'Depth-First Search (DFS)',
-      q5: 'O(b^d)',
+      'jee-q1': '\\frac{1}{c} \\sqrt{\\frac{E}{2m}}',
+      'jee-q2': '3',
+      'jee-q3': 'Tropylium cation (Cycloheptatrienyl cation)',
+      'jee-q4': '24',
+      'jee-q5': '\\frac{\\pi}{4}',
+      'jee-q6': '4',
     },
-    score: 5,
-    totalQuestions: 5,
+    score: 24,
+    totalMarks: 24,
+    totalQuestions: 6,
+    correctCount: 6,
+    incorrectCount: 0,
+    unattemptedCount: 0,
     percentage: 100,
-    flaggedQuestions: [],
-  },
-  {
-    id: 'attempt-2',
-    testId: 'test-2',
-    testTitle: 'Organic Mechanisms: SN1 vs SN2 Diagnostic Quiz',
-    subjectId: 'chem-org',
-    startedAt: '2026-08-15T11:00:00.000Z',
-    completedAt: '2026-08-15T11:06:15.000Z',
-    durationSeconds: 375,
-    answers: {
-      cq1: 'Primary alkyl halide with strong nucleophile in polar aprotic solvent',
-      cq2: 'True',
-      cq3: 'Rate = k[Substrate]',
-      cq4: 'Carbocation',
-    },
-    score: 4,
-    totalQuestions: 4,
-    percentage: 100,
-    flaggedQuestions: [],
   },
 ];
