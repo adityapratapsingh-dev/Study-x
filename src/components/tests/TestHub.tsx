@@ -3,6 +3,8 @@ import { useWorkspace } from '../../context/WorkspaceContext';
 import { Test, DifficultyLevel } from '../../types';
 import { ActiveExamView } from './ActiveExamView';
 import { ExamResultView } from './ExamResultView';
+import { PageContainer, PageHeader } from '../shared/Page';
+import { subjectAccent } from '../../lib/subjectAccent';
 import {
   FileCheck,
   Plus,
@@ -107,23 +109,16 @@ export const TestHub: React.FC = () => {
   });
 
   return (
-    <div className="flex-1 p-6 md:p-8 bg-slate-950 text-slate-100 overflow-y-auto max-w-7xl mx-auto w-full space-y-8">
+    <PageContainer className="space-y-8">
       
-      {/* Top Banner & Action Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-3xl bg-gradient-to-r from-indigo-950/60 via-slate-900 to-slate-900 border border-slate-800 shadow-xl">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <FileCheck className="w-6 h-6 text-indigo-400" />
-            <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight">
-              Test & Exam Simulator
-            </h1>
-          </div>
-          <p className="text-xs sm:text-sm text-slate-400 max-w-xl">
-            Test yourself with timed practice tests, instant AI diagnostic scoring, hint support, and detailed question breakdowns.
-          </p>
-        </div>
-
-        <div className="flex items-center gap-3">
+      <PageHeader
+        eyebrow="Timed practice & full-length CBT simulator"
+        eyebrowIcon={FileCheck}
+        accent="bg-indigo-500/20 text-indigo-300 border-indigo-500/30"
+        accentGradient="from-indigo-950 via-slate-900 to-slate-950"
+        title="Test & Exam Simulator"
+        subtitle="Test yourself with timed practice tests, instant AI diagnostic scoring, hint support, and detailed question breakdowns."
+        actions={
           <button
             id="btn-hub-generate-quiz"
             onClick={() => setIsAiQuizModalOpen(true)}
@@ -132,8 +127,8 @@ export const TestHub: React.FC = () => {
             <Sparkles className="w-4 h-4" />
             <span>Generate AI Test</span>
           </button>
-        </div>
-      </div>
+        }
+      />
 
       {/* Filters Bar */}
       <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
@@ -194,10 +189,7 @@ export const TestHub: React.FC = () => {
                   <div className="flex items-center justify-between gap-2 mb-3">
                     <span
                       className="px-2.5 py-0.5 rounded text-[11px] font-bold"
-                      style={{
-                        backgroundColor: `${sub?.color || '#3B82F6'}20`,
-                        color: sub?.color || '#3B82F6',
-                      }}
+                      style={subjectAccent(sub?.color)}
                     >
                       {sub?.code || 'General'}
                     </span>
@@ -328,6 +320,6 @@ export const TestHub: React.FC = () => {
           </div>
         </div>
       )}
-    </div>
+    </PageContainer>
   );
 };

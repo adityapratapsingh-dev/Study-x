@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useWorkspace } from '../../context/WorkspaceContext';
 import { FlashcardDeck, Flashcard } from '../../types';
+import { PageContainer, PageHeader } from '../shared/Page';
+import { subjectAccent } from '../../lib/subjectAccent';
 import {
   Layers,
   Plus,
@@ -110,7 +112,7 @@ export const FlashcardHub: React.FC = () => {
       const learningCount = Object.values(sessionRatings).filter((r) => r === 'learning').length;
 
       return (
-        <div className="flex-1 p-6 md:p-8 bg-slate-950 text-slate-100 flex items-center justify-center min-h-[calc(100vh-112px)]">
+        <PageContainer bleed scroll={false} className="flex items-center justify-center p-6 md:p-8">
           <div className="max-w-md w-full bg-slate-900 border border-slate-800 rounded-3xl p-8 text-center space-y-6 shadow-2xl">
             <div className="w-16 h-16 bg-emerald-500/20 text-emerald-400 rounded-2xl flex items-center justify-center mx-auto shadow-lg">
               <Award className="w-8 h-8" />
@@ -153,23 +155,20 @@ export const FlashcardHub: React.FC = () => {
                 Exit to Decks
               </button>
             </div>
-          </div>
         </div>
+        </PageContainer>
       );
     }
 
     return (
-      <div className="flex-1 p-6 md:p-8 bg-slate-950 text-slate-100 flex flex-col justify-between max-w-3xl mx-auto w-full min-h-[calc(100vh-112px)]">
+      <PageContainer width="narrow" scroll={false} className="flex flex-col justify-between">
         
         {/* Top Study Bar */}
         <div className="flex items-center justify-between gap-4 pb-4 border-b border-slate-800">
           <div className="flex items-center gap-3">
             <span
               className="text-xs font-bold px-2.5 py-1 rounded-lg"
-              style={{
-                backgroundColor: `${sub?.color || '#3B82F6'}20`,
-                color: sub?.color || '#3B82F6',
-              }}
+              style={subjectAccent(sub?.color)}
             >
               {sub?.code || 'Deck'}
             </span>
@@ -266,29 +265,22 @@ export const FlashcardHub: React.FC = () => {
             </button>
           </div>
         </div>
-      </div>
+      </PageContainer>
     );
   }
 
   // Flashcards Catalog Grid
   return (
-    <div className="flex-1 p-6 md:p-8 bg-slate-950 text-slate-100 overflow-y-auto max-w-7xl mx-auto w-full space-y-8">
+    <PageContainer className="space-y-8">
       
-      {/* Top Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-3xl bg-gradient-to-r from-violet-950/60 via-slate-900 to-slate-900 border border-slate-800 shadow-xl">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <Layers className="w-6 h-6 text-violet-400" />
-            <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight">
-              Active Recall Flashcards
-            </h1>
-          </div>
-          <p className="text-xs sm:text-sm text-slate-400 max-w-xl">
-            Retain formulas, terms, and core concepts using spaced repetition and 3D active recall decks.
-          </p>
-        </div>
-
-        <div className="flex items-center gap-3">
+      <PageHeader
+        eyebrow="Spaced repetition"
+        eyebrowIcon={Layers}
+        accent="bg-violet-500/20 text-violet-300 border-violet-500/30"
+        accentGradient="from-violet-950/60 via-slate-900 to-slate-950"
+        title="Active Recall Flashcards"
+        subtitle="Retain formulas, terms, and core concepts using spaced repetition and 3D active recall decks."
+        actions={
           <button
             id="btn-generate-flashcards"
             onClick={() => setIsAiFlashcardModalOpen(true)}
@@ -297,8 +289,8 @@ export const FlashcardHub: React.FC = () => {
             <Sparkles className="w-4 h-4" />
             <span>Generate Flashcards with AI</span>
           </button>
-        </div>
-      </div>
+        }
+      />
 
       {/* Decks Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -328,10 +320,7 @@ export const FlashcardHub: React.FC = () => {
                   <div className="flex items-center justify-between mb-3">
                     <span
                       className="px-2.5 py-0.5 rounded text-[11px] font-bold"
-                      style={{
-                        backgroundColor: `${sub?.color || '#3B82F6'}20`,
-                        color: sub?.color || '#3B82F6',
-                      }}
+                      style={subjectAccent(sub?.color)}
                     >
                       {sub?.code || 'General'}
                     </span>
@@ -379,6 +368,6 @@ export const FlashcardHub: React.FC = () => {
           })
         )}
       </div>
-    </div>
+    </PageContainer>
   );
 };

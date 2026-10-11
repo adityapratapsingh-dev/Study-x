@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useWorkspace } from '../../context/WorkspaceContext';
 import { StudyTask } from '../../types';
+import { PageContainer, PageHeader } from './Page';
 import {
   Clock,
   CheckCircle2,
@@ -97,34 +98,31 @@ export const DailyStudyPlanner: React.FC = () => {
   const secondsDisplay = secondsLeft % 60;
 
   return (
-    <div className="flex-1 overflow-y-auto bg-slate-950 text-slate-100 p-4 sm:p-6 lg:p-8 space-y-8">
+    <PageContainer className="space-y-8">
       
-      {/* Top Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-white flex items-center gap-2.5">
-            <Target className="w-6 h-6 text-indigo-400" />
-            Daily Aspirant Study Routine & Problem Target Tracker
-          </h1>
-          <p className="text-sm text-slate-400 mt-1">
-            Maintain daily question practice consistency (target 60-100 questions/day across PCM / PCB).
-          </p>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-orange-500/10 border border-orange-500/30 text-orange-400 text-xs font-semibold">
-            <Flame className="w-4 h-4" />
-            {studyStreakDays} Day Streak
-          </div>
-          <button
-            onClick={() => setIsNewTaskOpen(true)}
-            className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs sm:text-sm rounded-xl shadow-lg shadow-indigo-600/20 flex items-center gap-2 transition cursor-pointer"
-          >
-            <Plus className="w-4 h-4" />
-            Add Daily Goal
-          </button>
-        </div>
-      </div>
+      <PageHeader
+        eyebrow="Daily consistency"
+        eyebrowIcon={Target}
+        accent="bg-indigo-500/20 text-indigo-300 border-indigo-500/30"
+        accentGradient="from-indigo-950/70 via-slate-900 to-slate-950"
+        title="Daily Aspirant Study Routine & Problem Target Tracker"
+        subtitle="Maintain daily question practice consistency (target 60-100 questions/day across PCM / PCB)."
+        actions={
+          <>
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-orange-500/10 border border-orange-500/30 text-orange-400 text-xs font-semibold">
+              <Flame className="w-4 h-4" />
+              {studyStreakDays} Day Streak
+            </div>
+            <button
+              onClick={() => setIsNewTaskOpen(true)}
+              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs sm:text-sm rounded-xl shadow-lg shadow-indigo-600/20 flex items-center gap-2 transition cursor-pointer"
+            >
+              <Plus className="w-4 h-4" />
+              Add Daily Goal
+            </button>
+          </>
+        }
+      />
 
       {/* Grid: 2 Columns - Left Focus Timer (5 Cols) & Right Target Tracker (7 Cols) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -404,6 +402,6 @@ export const DailyStudyPlanner: React.FC = () => {
           </div>
         </div>
       )}
-    </div>
+    </PageContainer>
   );
 };

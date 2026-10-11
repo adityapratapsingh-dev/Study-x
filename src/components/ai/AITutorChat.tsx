@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { useWorkspace } from '../../context/WorkspaceContext';
+import { PageContainer } from '../shared/Page';
 import { requestAiExplain } from '../../lib/geminiApi';
 import {
   Bot,
@@ -110,7 +111,7 @@ export const AITutorChat: React.FC = () => {
   };
 
   return (
-    <div className="flex-1 flex flex-col bg-slate-950 text-slate-100 overflow-hidden font-sans">
+    <PageContainer bleed scroll={false} className="flex flex-col font-sans">
       
       {/* Header bar */}
       <div className="px-4 sm:px-6 py-3.5 bg-slate-900 border-b border-slate-800 flex flex-wrap items-center justify-between gap-3 shrink-0">
@@ -244,6 +245,6 @@ export const AITutorChat: React.FC = () => {
           </button>
         </form>
       </div>
-    </div>
+    </PageContainer>
   );
 };

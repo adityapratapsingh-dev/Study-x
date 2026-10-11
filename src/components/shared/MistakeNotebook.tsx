@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useWorkspace } from '../../context/WorkspaceContext';
 import { MistakeLog, MistakeCategory } from '../../types';
+import { PageContainer, PageHeader } from './Page';
 import {
   BookOpen,
   Plus,
@@ -106,26 +107,16 @@ export const MistakeNotebook: React.FC = () => {
   const pendingCount = mistakeLogs.length - resolvedCount;
 
   return (
-    <div className="flex-1 overflow-y-auto bg-slate-950 text-slate-100 p-4 sm:p-6 lg:p-8 space-y-6">
+    <PageContainer className="space-y-6">
       
-      {/* Header Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-6">
-        <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold text-white flex items-center gap-2.5">
-              <BookOpen className="w-6 h-6 text-amber-400" />
-              Mistake Notebook (Galti Diary)
-            </h1>
-            <span className="text-xs uppercase font-semibold px-2 py-0.5 bg-amber-500/20 text-amber-300 rounded border border-amber-500/30">
-              High Impact
-            </span>
-          </div>
-          <p className="text-sm text-slate-400 mt-1">
-            The #1 secret of All India Rankers: Review and eliminate every single mistake made in mock exams.
-          </p>
-        </div>
-
-        <div className="flex items-center gap-3">
+      <PageHeader
+        eyebrow="High Impact"
+        eyebrowIcon={BookOpen}
+        accent="bg-amber-500/20 text-amber-300 border-amber-500/30"
+        accentGradient="from-amber-950/70 via-slate-900 to-slate-950"
+        title="Mistake Notebook (Galti Diary)"
+        subtitle="The #1 secret of All India Rankers: Review and eliminate every single mistake made in mock exams."
+        actions={
           <button
             onClick={() => setIsAddModalOpen(true)}
             className="px-4 py-2.5 bg-amber-600 hover:bg-amber-500 text-white font-semibold text-sm rounded-xl shadow-lg shadow-amber-600/20 flex items-center gap-2 transition cursor-pointer"
@@ -133,8 +124,8 @@ export const MistakeNotebook: React.FC = () => {
             <Plus className="w-4 h-4" />
             Add New Mistake
           </button>
-        </div>
-      </div>
+        }
+      />
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -464,6 +455,6 @@ export const MistakeNotebook: React.FC = () => {
           </div>
         </div>
       )}
-    </div>
+    </PageContainer>
   );
 };

@@ -2,6 +2,8 @@ import React, { useState, useMemo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { useWorkspace } from '../../context/WorkspaceContext';
 import { Note } from '../../types';
+import { PageContainer } from '../shared/Page';
+import { subjectAccent } from '../../lib/subjectAccent';
 import { requestAiSummary, requestAiExplain } from '../../lib/geminiApi';
 import {
   FileText,
@@ -201,7 +203,7 @@ export const NotesWorkspace: React.FC = () => {
   };
 
   return (
-    <div className="flex-1 flex flex-col md:flex-row min-h-[calc(100vh-112px)] bg-slate-950 text-slate-100 overflow-hidden">
+    <PageContainer bleed scroll={false} className="flex flex-col md:flex-row">
       
       {/* LEFT SIDEBAR: Notes Directory & Filters */}
       <aside className="w-full md:w-80 border-r border-slate-800 bg-slate-900/60 flex flex-col shrink-0">
@@ -326,10 +328,7 @@ export const NotesWorkspace: React.FC = () => {
                   <div className="flex items-center justify-between mt-2.5 pt-1 text-[11px] text-slate-500">
                     <span
                       className="px-1.5 py-0.5 rounded font-medium text-[10px]"
-                      style={{
-                        backgroundColor: `${sub?.color || '#3B82F6'}20`,
-                        color: sub?.color || '#3B82F6',
-                      }}
+                      style={subjectAccent(sub?.color)}
                     >
                       {sub?.code || 'General'}
                     </span>
@@ -703,6 +702,6 @@ export const NotesWorkspace: React.FC = () => {
           </div>
         </div>
       )}
-    </div>
+    </PageContainer>
   );
 };

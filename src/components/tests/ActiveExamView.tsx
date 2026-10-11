@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Test, Question, TestAttempt, NtaQuestionStatus } from '../../types';
 import { useWorkspace } from '../../context/WorkspaceContext';
+import { PageContainer } from '../shared/Page';
 import {
   Timer,
   Flag,
@@ -233,7 +234,7 @@ export const ActiveExamView: React.FC<ActiveExamViewProps> = ({ test, onFinish, 
   );
 
   return (
-    <div className="flex-1 flex flex-col bg-slate-950 text-slate-100 min-h-[calc(100vh-64px)] overflow-hidden font-sans">
+    <PageContainer bleed scroll={false} className="flex flex-col font-sans">
       
       {/* Top CBT NTA Exam Bar */}
       <header className="px-4 sm:px-6 py-3 bg-slate-900 border-b border-slate-800 flex items-center justify-between gap-4 shrink-0 shadow-md">
@@ -643,6 +644,6 @@ export const ActiveExamView: React.FC<ActiveExamViewProps> = ({ test, onFinish, 
           </div>
         </div>
       )}
-    </div>
+    </PageContainer>
   );
 };

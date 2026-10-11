@@ -11,6 +11,7 @@ import {
 } from './jeeBlueprintData';
 import { useWorkspace } from '../../context/WorkspaceContext';
 import { AspirantProfile, SyllabusChapter, DailyBlock } from '../../types';
+import { PageContainer, PageHeader } from '../shared/Page';
 import { JEE_FULL_MOCK_TEST } from '../jee/jeeData';
 import {
   Atom,
@@ -185,7 +186,7 @@ export const JeeBlueprint: React.FC = () => {
   ];
 
   return (
-    <div className="flex-1 overflow-y-auto bg-slate-950 text-slate-100 p-4 sm:p-6 lg:p-8 space-y-8">
+    <PageContainer className="space-y-8">
       {/* Toast */}
       {toast && (
         <div className="fixed bottom-6 right-6 z-50 bg-emerald-600 text-white px-4 py-3 rounded-xl shadow-xl flex items-center gap-2 border border-emerald-400/30">
@@ -194,25 +195,15 @@ export const JeeBlueprint: React.FC = () => {
         </div>
       )}
 
-      {/* Hero */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-950 via-slate-900 to-cyan-950 border border-blue-800/40 p-6 sm:p-8 shadow-xl">
-        <div className="relative z-10 space-y-3 max-w-3xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 text-xs font-semibold border border-blue-500/30">
-            <Compass className="w-3.5 h-3.5 text-blue-400" />
-            The JEE Command Center — Class 11, Class 12 & Droppers
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
-            Your Complete JEE Blueprint
-          </h1>
-          <p className="text-sm text-slate-300 leading-relaxed">
-            Pick your profile and get a battle-tested roadmap, the full PCM syllabus mapped chapter-by-chapter,
-            a realistic weekly timetable, and a progress tracker — all in one place.
-          </p>
-        </div>
-        <div className="absolute right-0 bottom-0 opacity-10 pointer-events-none transform translate-x-12 translate-y-12">
-          <GraduationCap className="w-64 h-64 text-blue-400" />
-        </div>
-      </div>
+      <PageHeader
+        eyebrow="The JEE Command Center — Class 11, Class 12 & Droppers"
+        eyebrowIcon={Compass}
+        accent="bg-blue-500/20 text-blue-300 border-blue-500/30"
+        accentGradient="from-blue-950 via-slate-900 to-cyan-950"
+        title="Your Complete JEE Blueprint"
+        subtitle="Pick your profile and get a battle-tested roadmap, the full PCM syllabus mapped chapter-by-chapter, a realistic weekly timetable, and a progress tracker — all in one place."
+        watermark={GraduationCap}
+      />
 
       {/* Profile Selector */}
       <div>
@@ -668,7 +659,7 @@ export const JeeBlueprint: React.FC = () => {
           </div>
         </div>
       )}
-    </div>
+    </PageContainer>
   );
 };
 
