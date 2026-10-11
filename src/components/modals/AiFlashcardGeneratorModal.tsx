@@ -91,7 +91,7 @@ export const AiFlashcardGeneratorModal: React.FC = () => {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-violet-600 to-indigo-600 flex items-center justify-center text-white shadow-md">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-500 flex items-center justify-center text-white shadow-md">
               <Layers className="w-4 h-4" />
             </div>
             <div>
@@ -193,7 +193,7 @@ export const AiFlashcardGeneratorModal: React.FC = () => {
             type="button"
             onClick={handleGenerateDeck}
             disabled={isGenerating || (!customTopic.trim() && selectedNoteId === 'none')}
-            className="px-5 py-2 text-xs font-bold bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 disabled:opacity-40 text-white rounded-xl shadow-lg shadow-violet-600/20 transition flex items-center gap-1.5 cursor-pointer"
+            className="px-5 py-2 text-xs font-bold bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 disabled:opacity-40 text-white rounded-xl shadow-lg shadow-blue-600/20 transition flex items-center gap-1.5 cursor-pointer"
           >
             <Sparkles className={`w-3.5 h-3.5 ${isGenerating ? 'animate-spin' : ''}`} />
             <span>{isGenerating ? 'Generating Deck...' : 'Generate Deck'}</span>

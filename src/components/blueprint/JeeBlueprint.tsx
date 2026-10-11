@@ -195,7 +195,7 @@ export const JeeBlueprint: React.FC = () => {
       )}
 
       {/* Hero */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-950 via-slate-900 to-indigo-950 border border-blue-800/40 p-6 sm:p-8 shadow-xl">
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-950 via-slate-900 to-cyan-950 border border-blue-800/40 p-6 sm:p-8 shadow-xl">
         <div className="relative z-10 space-y-3 max-w-3xl">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 text-xs font-semibold border border-blue-500/30">
             <Compass className="w-3.5 h-3.5 text-blue-400" />

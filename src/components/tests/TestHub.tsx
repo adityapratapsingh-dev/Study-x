@@ -127,7 +127,7 @@ export const TestHub: React.FC = () => {
           <button
             id="btn-hub-generate-quiz"
             onClick={() => setIsAiQuizModalOpen(true)}
-            className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white text-xs sm:text-sm font-bold rounded-xl shadow-lg shadow-indigo-600/30 transition transform active:scale-95 cursor-pointer"
+            className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white text-xs sm:text-sm font-bold rounded-xl shadow-lg shadow-indigo-600/30 transition transform active:scale-95 cursor-pointer"
           >
             <Sparkles className="w-4 h-4" />
             <span>Generate AI Test</span>

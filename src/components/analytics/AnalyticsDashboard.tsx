@@ -149,7 +149,7 @@ export const AnalyticsDashboard: React.FC = () => {
                   </div>
                   <div className="w-full h-2.5 bg-slate-800 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full transition-all"
+                      className="h-full bg-gradient-to-r from-blue-500 to-cyan-400 rounded-full transition-all"
                       style={{ width: `${score}%` }}
                     />
                   </div>

@@ -66,18 +66,20 @@ export const Navbar: React.FC = () => {
 
   return (
     <header className="sticky top-0 z-40 bg-slate-900/95 backdrop-blur border-b border-slate-800 text-slate-100">
+      {/* Signature ember hairline */}
+      <div className="edge-ember h-px w-full" aria-hidden="true" />
       {/* Primary Top Bar */}
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 gap-3">
           
           {/* Logo & Brand & Exam Switcher */}
           <div className="flex items-center gap-3 shrink-0">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-emerald-500 flex items-center justify-center shadow-lg shadow-blue-500/20 text-white font-bold">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 via-amber-500 to-blue-500 flex items-center justify-center shadow-lg shadow-amber-500/20 text-slate-950 font-bold">
               <GraduationCap className="w-6 h-6" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-bold text-base sm:text-lg text-white tracking-tight">RankForge</span>
+                <span className="font-display font-bold text-base sm:text-lg text-white tracking-tight">RankForge</span>
                 <span className="text-[10px] uppercase font-bold px-1.5 py-0.5 bg-blue-500/20 text-blue-300 rounded border border-blue-500/30">
                   JEE • NEET
                 </span>
@@ -149,7 +151,7 @@ export const Navbar: React.FC = () => {
             {/* AI PYQ Drill generator button */}
             <button
               onClick={() => setIsAiQuizModalOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs font-semibold rounded-xl shadow-md shadow-blue-600/20 transition cursor-pointer"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white text-xs font-semibold rounded-xl shadow-md shadow-blue-600/20 transition cursor-pointer"
             >
               <Sparkles className="w-3.5 h-3.5 text-amber-300" />
               <span className="hidden sm:inline">AI Drill Generator</span>

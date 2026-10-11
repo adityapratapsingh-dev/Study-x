@@ -292,7 +292,7 @@ export const FlashcardHub: React.FC = () => {
           <button
             id="btn-generate-flashcards"
             onClick={() => setIsAiFlashcardModalOpen(true)}
-            className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white text-xs sm:text-sm font-bold rounded-xl shadow-lg shadow-violet-600/30 transition transform active:scale-95 cursor-pointer"
+            className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white text-xs sm:text-sm font-bold rounded-xl shadow-lg shadow-violet-600/30 transition transform active:scale-95 cursor-pointer"
           >
             <Sparkles className="w-4 h-4" />
             <span>Generate Flashcards with AI</span>

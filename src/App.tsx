@@ -24,7 +24,7 @@ const WorkspaceContent: React.FC = () => {
   const { activeTab } = useWorkspace();
 
   return (
-    <div className="min-h-screen bg-slate-950 flex flex-col font-sans selection:bg-blue-500 selection:text-white">
+    <div className="min-h-screen bg-slate-950 flex flex-col font-sans selection:bg-amber-500 selection:text-amber-950">
       <Navbar />
 
       <main className="flex-1 flex flex-col overflow-hidden">
