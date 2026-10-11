@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useWorkspace } from '../../context/WorkspaceContext';
 import { FormulaCard } from '../../types';
+import { PageContainer, PageHeader } from './Page';
 import {
   Zap,
   FlaskConical,
@@ -47,25 +48,15 @@ export const FormulaSheetViewer: React.FC = () => {
   };
 
   return (
-    <div className="flex-1 overflow-y-auto bg-slate-950 text-slate-100 p-4 sm:p-6 lg:p-8 space-y-6">
-      {/* Header Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-6">
-        <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold text-white flex items-center gap-2.5">
-              <Zap className="w-6 h-6 text-blue-400" />
-              Formula & High-Yield Concept Deck
-            </h1>
-            <span className="text-xs uppercase font-semibold px-2 py-0.5 bg-blue-500/20 text-blue-300 rounded border border-blue-500/30">
-              Instant Revision
-            </span>
-          </div>
-          <p className="text-sm text-slate-400 mt-1">
-            Master critical formulas for Physics, Chemistry, Math, and high-yield NCERT Biology rules.
-          </p>
-        </div>
-
-        <div className="flex items-center gap-3">
+    <PageContainer className="space-y-6">
+      <PageHeader
+        eyebrow="Instant Revision"
+        eyebrowIcon={Zap}
+        accent="bg-blue-500/20 text-blue-300 border-blue-500/30"
+        accentGradient="from-blue-950/70 via-slate-900 to-slate-950"
+        title="Formula & High-Yield Concept Deck"
+        subtitle="Master critical formulas for Physics, Chemistry, Math, and high-yield NCERT Biology rules."
+        actions={
           <button
             onClick={() => {
               setTestRecallMode(!testRecallMode);
@@ -80,8 +71,8 @@ export const FormulaSheetViewer: React.FC = () => {
             {testRecallMode ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             {testRecallMode ? 'Active Recall Mode (ON)' : 'Enable Active Recall Mode'}
           </button>
-        </div>
-      </div>
+        }
+      />
 
       {/* Filters Bar */}
       <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 bg-slate-900/70 p-4 rounded-2xl border border-slate-800">
@@ -218,6 +209,6 @@ export const FormulaSheetViewer: React.FC = () => {
           );
         })}
       </div>
-    </div>
+    </PageContainer>
   );
 };

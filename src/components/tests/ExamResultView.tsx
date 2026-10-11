@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import confetti from 'canvas-confetti';
 import { Test, TestAttempt, Question } from '../../types';
 import { useWorkspace } from '../../context/WorkspaceContext';
+import { PageContainer } from '../shared/Page';
 import {
   Trophy,
   CheckCircle2,
@@ -114,7 +115,7 @@ export const ExamResultView: React.FC<ExamResultViewProps> = ({
   };
 
   return (
-    <div className="flex-1 p-4 sm:p-6 lg:p-8 bg-slate-950 text-slate-100 overflow-y-auto max-w-5xl mx-auto w-full space-y-8">
+    <PageContainer width="narrow" className="space-y-8">
       
       {/* Toast Alert */}
       {bulkLogSuccess && (
@@ -328,6 +329,6 @@ export const ExamResultView: React.FC<ExamResultViewProps> = ({
           })}
         </div>
       </div>
-    </div>
+    </PageContainer>
   );
 };

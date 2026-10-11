@@ -1218,8 +1218,8 @@ export const JEE_PROFILE_META: ProfileMeta[] = [
     headline: 'Build unshakeable fundamentals while the stakes are still low.',
     description:
       'You have the single biggest advantage in the JEE race: time. Two full years means you can learn concepts deeply, build intuition and never rush. Treat Class 11 as building the engine — Class 12 is only the fuel.',
-    accent: '#3B82F6',
-    gradient: 'from-blue-600 to-indigo-600',
+    accent: 'var(--color-blue-500)',
+    gradient: 'from-blue-600 to-cyan-500',
     icon: 'Atom',
     monthsAvailable: '~24 months',
     dailyHours: 4,
@@ -1242,8 +1242,8 @@ export const JEE_PROFILE_META: ProfileMeta[] = [
     headline: 'Balance boards and JEE without dropping either ball.',
     description:
       'Class 12 is a juggling act: new hard chapters, board exams, and JEE all at once. The winners are those who revise Class 11 continuously while mastering Class 12, and who start mock tests early.',
-    accent: '#8B5CF6',
-    gradient: 'from-purple-600 to-fuchsia-600',
+    accent: 'var(--color-indigo-500)',
+    gradient: 'from-blue-600 to-emerald-500',
     icon: 'Rocket',
     monthsAvailable: '~12 months',
     dailyHours: 6,
@@ -1266,8 +1266,8 @@ export const JEE_PROFILE_META: ProfileMeta[] = [
     headline: 'One focused year. No school. Maximum output.',
     description:
       'As a dropper you have 10-12 focused hours a day and zero distractions — but also no safety net. Your edge is intensity and revision loops. Your enemy is burnout, comparison and skipping the basics you think you already know.',
-    accent: '#F59E0B',
-    gradient: 'from-amber-500 to-orange-600',
+    accent: 'var(--color-amber-500)',
+    gradient: 'from-amber-400 to-rose-500',
     icon: 'Flame',
     monthsAvailable: '~11-12 months',
     dailyHours: 10,

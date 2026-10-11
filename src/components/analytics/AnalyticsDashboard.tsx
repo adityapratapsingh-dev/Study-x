@@ -1,5 +1,6 @@
 import React from 'react';
 import { useWorkspace } from '../../context/WorkspaceContext';
+import { PageContainer, PageHeader } from '../shared/Page';
 import {
   BarChart3,
   Trophy,
@@ -53,29 +54,22 @@ export const AnalyticsDashboard: React.FC = () => {
   const resolvedMistakes = mistakeLogs.filter((m) => m.isResolved).length;
 
   return (
-    <div className="flex-1 p-4 sm:p-6 lg:p-8 bg-slate-950 text-slate-100 overflow-y-auto max-w-7xl mx-auto w-full space-y-8 font-sans">
+    <PageContainer className="space-y-8 font-sans">
       
-      {/* Top Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-3xl bg-gradient-to-r from-blue-950/60 via-slate-900 to-slate-900 border border-slate-800 shadow-xl">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <BarChart3 className="w-6 h-6 text-blue-400" />
-            <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
-              Rank & Readiness Analytics ({examMode === 'jee' ? 'JEE Main & Advanced' : 'NEET UG'})
-            </h1>
-          </div>
-          <p className="text-xs sm:text-sm text-slate-400 max-w-xl">
-            Real-time tracking of NTA CBT test accuracy, negative marks penalty, and Galti Diary resolution rate.
-          </p>
-        </div>
-
-        <div className="flex items-center gap-3">
+      <PageHeader
+        eyebrow="Live performance tracking"
+        eyebrowIcon={BarChart3}
+        accent="bg-blue-500/20 text-blue-300 border-blue-500/30"
+        accentGradient="from-blue-950 via-slate-900 to-slate-950"
+        title={`Rank & Readiness Analytics (${examMode === 'jee' ? 'JEE Main & Advanced' : 'NEET UG'})`}
+        subtitle="Real-time tracking of NTA CBT test accuracy, negative marks penalty, and Galti Diary resolution rate."
+        actions={
           <div className="flex items-center gap-2 bg-orange-500/10 border border-orange-500/30 text-orange-400 px-4 py-2 rounded-2xl text-xs font-bold">
             <Flame className="w-4 h-4 fill-current animate-pulse" />
             <span>{studyStreakDays} Day Streak!</span>
           </div>
-        </div>
-      </div>
+        }
+      />
 
       {/* 4 Stat Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -149,7 +143,7 @@ export const AnalyticsDashboard: React.FC = () => {
                   </div>
                   <div className="w-full h-2.5 bg-slate-800 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full transition-all"
+                      className="h-full bg-gradient-to-r from-blue-500 to-cyan-400 rounded-full transition-all"
                       style={{ width: `${score}%` }}
                     />
                   </div>
@@ -196,6 +190,6 @@ export const AnalyticsDashboard: React.FC = () => {
           </div>
         </div>
       </div>
-    </div>
+    </PageContainer>
   );
 };

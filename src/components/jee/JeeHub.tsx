@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useWorkspace } from '../../context/WorkspaceContext';
 import { JEE_SAMPLE_QUESTIONS, JEE_FULL_MOCK_TEST, JEE_PERCENTILE_MATRIX, JEE_STRATEGY_TIPS } from './jeeData';
 import { INITIAL_CHAPTER_WEIGHTAGES, INITIAL_FORMULAS } from '../../data/competitiveData';
+import { PageContainer, PageHeader } from '../shared/Page';
 import {
   Zap,
   FlaskConical,
@@ -75,7 +76,7 @@ export const JeeHub: React.FC = () => {
   };
 
   return (
-    <div className="flex-1 overflow-y-auto bg-slate-950 text-slate-100 p-4 sm:p-6 lg:p-8 space-y-8">
+    <PageContainer className="space-y-8">
       {/* Toast Alert */}
       {addedMistakeToast && (
         <div className="fixed bottom-6 right-6 z-50 bg-emerald-600 text-white px-4 py-3 rounded-xl shadow-xl flex items-center gap-2 border border-emerald-400/30 animate-bounce">
@@ -84,23 +85,16 @@ export const JeeHub: React.FC = () => {
         </div>
       )}
 
-      {/* Hero Header Banner */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-950 via-slate-900 to-indigo-950 border border-blue-800/40 p-6 sm:p-8 shadow-xl">
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="space-y-2 max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 text-xs font-semibold border border-blue-500/30">
-              <Zap className="w-3.5 h-3.5 text-blue-400" />
-              NTA JEE Main & Advanced 2025-2026 Portal
-            </div>
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
-              JEE Rank Accelerator Hub
-            </h1>
-            <p className="text-sm text-slate-300 leading-relaxed">
-              Target 99.5+ Percentile with official NTA Computer Based Test (CBT) simulator, Section B integer practice, high-yield chapter weightage, and formula sheets.
-            </p>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-3">
+      <PageHeader
+        eyebrow="NTA JEE Main & Advanced 2025-2026 Portal"
+        eyebrowIcon={Zap}
+        accent="bg-blue-500/20 text-blue-300 border-blue-500/30"
+        accentGradient="from-blue-950 via-slate-900 to-cyan-950"
+        title="JEE Rank Accelerator Hub"
+        subtitle="Target 99.5+ Percentile with official NTA Computer Based Test (CBT) simulator, Section B integer practice, high-yield chapter weightage, and formula sheets."
+        watermark={Sigma}
+        actions={
+          <>
             <button
               onClick={() => startTest(JEE_FULL_MOCK_TEST.id)}
               className="px-5 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm shadow-lg shadow-blue-600/30 flex items-center gap-2 transition cursor-pointer"
@@ -115,14 +109,9 @@ export const JeeHub: React.FC = () => {
               <BookOpen className="w-4 h-4 text-amber-400" />
               Mistake Notebook
             </button>
-          </div>
-        </div>
-
-        {/* Decorative Grid Pattern */}
-        <div className="absolute right-0 bottom-0 opacity-10 pointer-events-none transform translate-x-12 translate-y-12">
-          <Sigma className="w-64 h-64 text-blue-400" />
-        </div>
-      </div>
+          </>
+        }
+      />
 
       {/* Subject Selector Tabs */}
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-4">
@@ -442,6 +431,6 @@ export const JeeHub: React.FC = () => {
 
         </div>
       </div>
-    </div>
+    </PageContainer>
   );
 };

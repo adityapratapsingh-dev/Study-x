@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useWorkspace } from '../../context/WorkspaceContext';
+import { PageContainer, PageHeader } from '../shared/Page';
 import {
   NEET_SAMPLE_QUESTIONS,
   NEET_FULL_MOCK_TEST,
@@ -63,7 +64,7 @@ export const NeetHub: React.FC = () => {
   };
 
   return (
-    <div className="flex-1 overflow-y-auto bg-slate-950 text-slate-100 p-4 sm:p-6 lg:p-8 space-y-8">
+    <PageContainer className="space-y-8">
       {/* Toast Notification */}
       {addedMistakeToast && (
         <div className="fixed bottom-6 right-6 z-50 bg-emerald-600 text-white px-4 py-3 rounded-xl shadow-xl flex items-center gap-2 border border-emerald-400/30 animate-bounce">
@@ -72,23 +73,16 @@ export const NeetHub: React.FC = () => {
         </div>
       )}
 
-      {/* Hero Header Banner */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-emerald-950 via-slate-900 to-teal-950 border border-emerald-800/40 p-6 sm:p-8 shadow-xl">
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="space-y-2 max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-semibold border border-emerald-500/30">
-              <HeartPulse className="w-3.5 h-3.5 text-emerald-400" />
-              NTA NEET UG 2025-2026 Medical Prep Portal
-            </div>
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
-              NEET MBBS 720 Mastery Hub
-            </h1>
-            <p className="text-sm text-slate-300 leading-relaxed">
-              Target 360/360 in Biology with NCERT line-by-line question drills, authentic 720-marks full syllabus mock exams, and chapter-wise weightage trackers.
-            </p>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-3">
+      <PageHeader
+        eyebrow="NTA NEET UG 2025-2026 Medical Prep Portal"
+        eyebrowIcon={HeartPulse}
+        accent="bg-emerald-500/20 text-emerald-300 border-emerald-500/30"
+        accentGradient="from-emerald-950 via-slate-900 to-cyan-950"
+        title="NEET MBBS 720 Mastery Hub"
+        subtitle="Target 360/360 in Biology with NCERT line-by-line question drills, authentic 720-marks full syllabus mock exams, and chapter-wise weightage trackers."
+        watermark={Sprout}
+        actions={
+          <>
             <button
               onClick={() => startTest(NEET_FULL_MOCK_TEST.id)}
               className="px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm shadow-lg shadow-emerald-600/30 flex items-center gap-2 transition cursor-pointer"
@@ -103,14 +97,9 @@ export const NeetHub: React.FC = () => {
               <BookOpen className="w-4 h-4 text-amber-400" />
               Mistake Notebook
             </button>
-          </div>
-        </div>
-
-        {/* Decorative Grid Pattern */}
-        <div className="absolute right-0 bottom-0 opacity-10 pointer-events-none transform translate-x-12 translate-y-12">
-          <Sprout className="w-64 h-64 text-emerald-400" />
-        </div>
-      </div>
+          </>
+        }
+      />
 
       {/* Subject Filter Tabs */}
       <div className="flex items-center gap-2 overflow-x-auto border-b border-slate-800 pb-4">
@@ -352,6 +341,6 @@ export const NeetHub: React.FC = () => {
 
         </div>
       </div>
-    </div>
+    </PageContainer>
   );
 };
