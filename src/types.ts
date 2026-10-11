@@ -1,5 +1,53 @@
 export type ExamMode = 'jee' | 'neet';
 
+export type AspirantProfile = 'class11' | 'class12' | 'dropper';
+
+export interface SyllabusChapter {
+  id: string;
+  subject: 'Physics' | 'Chemistry' | 'Mathematics';
+  classGrade: '11' | '12';
+  unit: string;
+  name: string;
+  weightage: 'Very High' | 'High' | 'Medium' | 'Low';
+  avgQuestions: number;
+  difficulty: DifficultyLevel;
+  estimatedHours: number;
+  priority: 1 | 2 | 3 | 4 | 5;
+  prerequisites: string[];
+  keyConcepts: string[];
+  jeeAdvancedFocus: string;
+  commonTraps: string[];
+  recommendedSources: string[];
+}
+
+export interface RoadmapPhase {
+  id: string;
+  profile: AspirantProfile;
+  phaseNumber: number;
+  title: string;
+  window: string;
+  goal: string;
+  focusAreas: string[];
+  dailyHours: number;
+  weeklyQuestionsTarget: number;
+  milestone: string;
+  deliverables: string[];
+  color: string;
+}
+
+export interface DailyBlock {
+  time: string;
+  activity: string;
+  type: 'theory' | 'practice' | 'revision' | 'test' | 'break' | 'rest';
+}
+
+export interface WeeklyPlan {
+  profile: AspirantProfile;
+  title: string;
+  summary: string;
+  days: { day: string; blocks: DailyBlock[] }[];
+}
+
 export type QuestionType = 'mcq' | 'numerical' | 'assertion_reason' | 'tf' | 'short';
 
 export type DifficultyLevel = 'Easy' | 'Medium' | 'Hard';
@@ -189,7 +237,8 @@ export interface FocusSession {
 }
 
 export type ActiveTab = 
-  | 'jee' 
+  | 'jee'
+  | 'blueprint'
   | 'neet' 
   | 'tests' 
   | 'mistakes' 

@@ -24,9 +24,9 @@ import {
   INITIAL_ATTEMPTS,
 } from '../data/initialData';
 import {
-  INITIAL_MISTAKE_LOGS,
-  INITIAL_FORMULA_CARDS,
-  CHAPTER_WEIGHTAGES,
+  INITIAL_MISTAKES,
+  INITIAL_FORMULAS,
+  INITIAL_CHAPTER_WEIGHTAGES,
 } from '../data/competitiveData';
 
 interface WorkspaceContextType {
@@ -237,9 +237,9 @@ export const WorkspaceProvider: React.FC<{ children: ReactNode }> = ({ children 
   const [mistakeLogs, setMistakeLogs] = useState<MistakeLog[]>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.MISTAKES);
-      return saved ? JSON.parse(saved) : INITIAL_MISTAKE_LOGS;
+      return saved ? JSON.parse(saved) : INITIAL_MISTAKES;
     } catch {
-      return INITIAL_MISTAKE_LOGS;
+      return INITIAL_MISTAKES;
     }
   });
 
@@ -518,7 +518,7 @@ export const WorkspaceProvider: React.FC<{ children: ReactNode }> = ({ children 
     setDecks(INITIAL_DECKS);
     setSelectedDeckId(INITIAL_DECKS[0].id);
     setTasks(INITIAL_TASKS);
-    setMistakeLogs(INITIAL_MISTAKE_LOGS);
+    setMistakeLogs(INITIAL_MISTAKES);
     setTestAttempts(INITIAL_ATTEMPTS);
     setActiveTest(null);
     setLatestAttempt(null);
@@ -617,8 +617,8 @@ export const WorkspaceProvider: React.FC<{ children: ReactNode }> = ({ children 
         addMistakeLog,
         toggleMistakeResolved,
         deleteMistakeLog,
-        formulas: INITIAL_FORMULA_CARDS,
-        chapterWeightages: CHAPTER_WEIGHTAGES,
+        formulas: INITIAL_FORMULAS,
+        chapterWeightages: INITIAL_CHAPTER_WEIGHTAGES,
         focusSessions,
         logFocusSession,
         studyStreakDays,

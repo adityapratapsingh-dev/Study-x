@@ -24,6 +24,7 @@ import {
   Sigma,
   Stethoscope,
   Atom,
+  Compass,
 } from 'lucide-react';
 
 export const Navbar: React.FC = () => {
@@ -46,6 +47,7 @@ export const Navbar: React.FC = () => {
 
   const tabs: { id: ActiveTab; label: string; icon: React.ElementType; badge?: string | number }[] = [
     { id: 'jee', label: 'JEE Hub (PCM)', icon: Atom },
+    { id: 'blueprint', label: 'JEE Blueprint (11/12/Dropper)', icon: Compass },
     { id: 'neet', label: 'NEET Hub (PCB)', icon: Stethoscope },
     { id: 'tests', label: 'NTA CBT Tests', icon: FileCheck },
     {

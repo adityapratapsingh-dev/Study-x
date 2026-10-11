@@ -7,6 +7,7 @@ import React from 'react';
 import { WorkspaceProvider, useWorkspace } from './context/WorkspaceContext';
 import { Navbar } from './components/layout/Navbar';
 import { JeeHub } from './components/jee/JeeHub';
+import { JeeBlueprint } from './components/blueprint/JeeBlueprint';
 import { NeetHub } from './components/neet/NeetHub';
 import { TestHub } from './components/tests/TestHub';
 import { MistakeNotebook } from './components/shared/MistakeNotebook';
@@ -28,6 +29,7 @@ const WorkspaceContent: React.FC = () => {
 
       <main className="flex-1 flex flex-col overflow-hidden">
         {activeTab === 'jee' && <JeeHub />}
+        {activeTab === 'blueprint' && <JeeBlueprint />}
         {activeTab === 'neet' && <NeetHub />}
         {activeTab === 'tests' && <TestHub />}
         {activeTab === 'mistakes' && <MistakeNotebook />}
